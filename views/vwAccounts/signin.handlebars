@@ -1,0 +1,108 @@
+{{#section 'css'}}
+<style>
+    .login-container {
+        /* Đặt chiều cao tối thiểu bằng màn hình trừ đi header */
+        min-height: 85vh; 
+        background-image: url('/static/images/bg.png'); 
+        background-size: cover;
+        background-position: center center;
+        display: flex;
+        align-items: center;
+        justify-content: center; /* Hoặc 'flex-end' nếu muốn đẩy form sang phải */
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.75); /* Màu trắng trong suốt */
+        backdrop-filter: blur(12px); /* Hiệu ứng làm mờ nền phía sau */
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        border-radius: 24px;
+    }
+
+    .form-control-glass {
+        background: rgba(255, 255, 255, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 50px;
+        padding: 12px 20px;
+    }
+    
+    .form-control-glass:focus {
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(45, 91, 255, 0.1);
+        border-color: #2d5bff;
+    }
+</style>
+{{/section}}
+
+<div class="login-container px-3">
+    <div class="card glass-card p-4 p-md-5" style="max-width: 420px; width: 100%;">
+        
+        <div class="text-center mb-4">
+            <div class="mb-3">
+                <i class="bi bi-paw-fill text-primary display-4"></i>
+            </div>
+            <h3 class="fw-bold" style="color: #333; font-family: 'Abhaya Libre', serif;">Welcome Back</h3>
+            <p class="text-secondary small">Enter your credentials to access your account</p>
+        </div>
+
+        <form method="POST">
+            <div class="mb-3">
+                <input type="email" class="form-control form-control-glass" id="email" name="email"
+                    placeholder="Email Address" required>
+            </div>
+            <div class="mb-3">
+                <input type="password" class="form-control form-control-glass" id="password" name="password"
+                    placeholder="Password" required>
+            </div>
+            
+            <div class="d-flex justify-content-end mb-4">
+                <a href="/forgot-password" class="text-primary text-decoration-none small fw-bold">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary rounded-pill w-100 py-3 fw-bold shadow-sm mb-3"
+                style="background-color: #2d5bff; border: none;">
+                SIGN IN
+            </button>
+
+            <div class="text-center border-top pt-3 border-secondary-subtle">
+                <span class="text-secondary small">Don't have an account?</span>
+                <a href="/signup" class="text-primary text-decoration-none fw-bold small ms-1">Create Account</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{#section 'js'}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const email = formData.get('email');
+        const password = formData.get('password');
+        
+        if (!email || !password) {
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please fill in all fields.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+        
+        // For demo purposes - you can remove this and let form submit naturally
+        Swal.fire({
+            title: 'Signing in...',
+            text: 'Please wait while we verify your credentials.',
+            icon: 'info',
+            timer: 1000,
+            timerProgressBar: true,
+            showConfirmButton: false
+        }).then(() => {
+            e.target.submit();
+        });
+    });
+</script>
+{{/section}}

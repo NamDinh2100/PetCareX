@@ -1,0 +1,152 @@
+{{!-- 1. DANH SÁCH KHÁCH HÀNG --}}
+
+<style>
+    .table-container {
+        min-height: 450px;
+    }
+    .pagination .page-link {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        padding: 0;
+        border: 2px solid #2d5bff;
+        color: #2d5bff;
+        font-weight: bold;
+    }
+    .pagination .page-item.active .page-link {
+        background-color: #2d5bff;
+        color: white;
+        border-color: #2d5bff;
+    }
+    .pagination .page-link:hover {
+        background-color: #2d5bff;
+        color: white;
+        border-color: #2d5bff;
+    }
+</style>
+
+<div class="row mb-4">
+    <div class="col-md-8 mx-auto">
+        <div class="input-group">
+            <input type="text" class="form-control border-dark search-input-rounded ps-4 bg-white"
+                placeholder="SEARCH DATA..." aria-label="Search">
+            <span class="position-absolute end-0 top-50 translate-middle-y me-3 z-1 cursor-pointer text-secondary">
+                <i class="bi bi-search"></i>
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body p-4">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="mb-0 brand-font fw-bold text-uppercase">Customer</h4>
+        </div>
+
+        <div class="table-responsive table-container">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" class="ps-3 py-3 rounded-start-3">ID</th> 
+                        <th scope="col" class="py-3">Name</th>
+                        <th scope="col" class="py-3">Email</th>
+                        <th scope="col" class="py-3">Phone</th>
+                        <th scope="col" class="py-3">Address</th>
+                    </tr>
+                </thead> 
+                <tbody>
+                    {{#each customers}}
+                    <tr>
+                        <td class="ps-3 fw-bold text-secondary">#{{user_id}}</td>
+                        <td class="fw-semibold">{{full_name}}</td>
+                        <td>{{email}}</td>
+                        <td>{{phone}}</td>
+                        <td class="text-muted small">{{address}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>   
+
+        <div class="d-flex justify-content-start mt-4">
+            <nav aria-label="Page navigation">
+                <ul class="pagination mb-0">
+                    {{#each pageNumbers}}
+                    <li class="page-item {{#if isCurrent}}active{{/if}}">
+                        <a class="page-link" href="?page={{value}}">{{value}}</a>
+                    </li>
+                    {{/each}}
+                </ul>
+            </nav>
+        </div>
+
+    </div>
+</div>
+
+{{!-- 2. MODAL THÊM KHÁCH HÀNG --}}
+{{#if isAddMode}}
+<div class="modal fade" id="addCustomerModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg">
+            
+            <div class="modal-header justify-content-center position-relative py-3">
+                <h4 class="modal-title brand-font fw-bold text-uppercase">New Customer</h4>
+                <a href="/admin/customers" class="position-absolute end-0 top-50 translate-middle-y me-3 text-danger fs-3 text-decoration-none">
+                    <i class="bi bi-x-circle-fill"></i>
+                </a>
+            </div>
+
+            <div class="modal-body p-5">
+                <form method="POST">
+                    <div class="mb-4">
+                        <input type="email" name="email" class="form-control form-control-lg rounded-pill border-2 fs-6" placeholder="EMAIL" required style="border-color: #ccc;">
+                    </div>
+
+                    <div class="mb-4">
+                        <input type="text" name="full_name" class="form-control form-control-lg rounded-pill border-2 fs-6" placeholder="NAME" required style="border-color: #ccc;">
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <input type="tel" name="phone" class="form-control form-control-lg rounded-pill border-2 fs-6" placeholder="PHONE" style="border-color: #ccc;">
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <input type="text" name="address" class="form-control form-control-lg rounded-pill border-2 fs-6" placeholder="ADDRESS" style="border-color: #ccc;">
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-outline-primary rounded-pill px-5 py-2 fw-bold text-uppercase border-2">
+                            Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{{#section 'js'}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Success!',
+                text: 'Customer information updated successfully.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                e.target.submit();
+            });
+        });
+    }
+</script>
+{{/section}}
+</div>
+{{/if}}

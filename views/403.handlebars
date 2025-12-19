@@ -1,0 +1,85 @@
+{{#section 'css'}}
+<style>
+    .error-page-wrapper {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f9f9f9; /* Màu nền nhẹ nhàng */
+        text-align: center;
+        padding: 50px 20px;
+    }
+
+    .error-code {
+        font-family: 'Abhaya Libre', serif;
+        font-size: 8rem;
+        font-weight: 800;
+        color: #2d5bff;
+        line-height: 1;
+        opacity: 0.2;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 0;
+        user-select: none;
+    }
+
+    .error-content {
+        position: relative;
+        z-index: 1;
+        max-width: 600px;
+    }
+
+    .error-img {
+        width: 100%;
+        max-width: 350px;
+        margin-bottom: 2rem;
+        border-radius: 20px;
+        /* Hiệu ứng bóng nhẹ */
+        filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); 
+    }
+
+    .error-title {
+        font-family: 'Abhaya Libre', serif;
+        font-size: 3rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 1rem;
+    }
+
+    .error-desc {
+        font-family: 'Abhaya Libre', serif;
+        color: #666;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    .btn-home {
+        background-color: #2d5bff;
+        border: none;
+        padding: 12px 30px;
+        font-weight: bold;
+        transition: transform 0.2s;
+    }
+
+    .btn-home:hover {
+        background-color: #1a4bd6;
+        transform: translateY(-3px);
+    }
+</style>
+{{/section}}
+
+<div class="error-page-wrapper">
+    <div class="error-code">403</div>
+
+    <div class="error-content">
+        <h1 class="error-title">Restricted Area!</h1>
+        
+        <p class="error-desc">
+            Woof! Sorry, humans allowed only with special permission.<br>
+            It seems you don't have the credentials to access this page.
+        </p>
+
+    </div>
+</div>

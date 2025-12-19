@@ -1,0 +1,114 @@
+{{#section 'css'}}
+<style>
+    .pop-up {
+        margin-top: 40px;
+        margin-bottom: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1050;
+    }
+
+    .modal-content {
+        border: 2px solid #a58f8f; /* Viền modal nâu nhạt */
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        background-color: #d9d9d9; /* Màu nền xám */
+        border-bottom: 2px solid #a58f8f;
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+
+    /* Label Style */
+    .form-label {
+        font-family: 'Abhaya Libre', serif;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        margin-left: 10px;
+        margin-bottom: 5px;
+    }
+</style>
+{{/section}}
+
+<div class="pop-up">
+    <div class="modal-dialog modal-dialog-centered modal-lg bg-white" style="max-width: 600px;">
+        <div class="modal-content shadow-lg">
+
+            <div class="modal-header justify-content-center position-relative">
+                <h4 class="modal-title brand-font fw-bold text-uppercase" style="letter-spacing: 1px;">
+                    SERVICE - EDIT
+                </h4>
+                <a href="/admin/services"           
+                    class="position-absolute end-0 top-50 translate-middle-y me-3 text-decoration-none">
+                    <i class="bi bi-x-circle-fill fs-3" style="color: #a94442;"></i>
+                </a>
+            </div> 
+
+            <div class="modal-body p-4">
+                <form method="POST">
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-2">
+                            <label class="form-label">ID</label>
+                            <input type="text" name="service_id" class="form-control form-control-lg rounded-pill border-2 fs-6"
+                                value="#{{service.service_id}}" readonly style="border-color: #000;">
+                        </div>
+
+                        <div class="col-md-5">
+                            <label class="form-label">Service name</label>
+                            <input type="text" name="service_name" class="form-control form-control-lg rounded-pill border-2 fs-6"
+                                value="{{service.service_name}}"  style="border-color: #000;">
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">Price</label>
+                            <input type="text" name="base_price" class="form-control form-control-lg rounded-pill border-2 fs-6"
+                                value="{{service.base_price}}"  style="border-color: #000;">
+                        </div>                                                              
+                    </div> 
+
+                    <div class="mb-4">
+                        <label class="form-label">Description</label>
+                        <textarea name="note" class="form-control border-2 fs-6 rounded-4" rows="3" 
+                            style="border-color: #000;">{{service.description}}</textarea>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" 
+                            class="btn btn-outline-success rounded-pill px-4 py-2 fw-bold fs-5 border-2 text-uppercase">
+                            Save
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{#section 'js'}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        Swal.fire({
+            title: 'Success!',
+            text: 'Service updated successfully.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        }).then(() => {
+            e.target.submit();
+        });
+    });
+</script>
+{{/section}}
+
+{{#section 'js'}}
+    <script>
+        // You can add JavaScript code here if needed
+        // Write for me check form validation
+    </script>
+{{/section}}

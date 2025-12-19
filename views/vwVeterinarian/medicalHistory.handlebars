@@ -1,0 +1,368 @@
+{{#section 'css'}}
+<style>
+    .page-container {
+        background-color: #f8f9fa;
+        min-height: 100vh;
+        padding: 20px 0;
+    }
+
+    .history-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: 3px solid #17a2b8;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .history-header {
+        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        color: white;
+        border-radius: 17px 17px 0 0;
+        padding: 25px 30px;
+        text-align: center;
+        position: relative;
+    }
+
+    .history-title {
+        font-size: 2rem;
+        font-weight: 800;
+        margin: 0;
+        font-family: 'Abhaya Libre', serif;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .close-button {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid white;
+        color: white;
+        border-radius: 50%;
+        padding: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .close-button:hover {
+        background: white;
+        color: #17a2b8;
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    .history-content {
+        padding: 40px;
+    }
+
+    .history-table {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e9ecef;
+    }
+
+    .table-header {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        font-weight: 700;
+        color: #2c3e50;
+        font-family: 'Abhaya Libre', serif;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border: none;
+    }
+
+    .table-row {
+        transition: all 0.3s ease;
+        border-bottom: 1px solid #f1f3f4;
+    }
+
+    .table-row:hover {
+        background-color: #f8f9fa;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-cell {
+        padding: 15px 20px;
+        font-weight: 600;
+        color: #495057;
+        vertical-align: middle;
+    }
+
+    .status-badge {
+        padding: 6px 15px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .status-completed {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+    }
+
+    .status-confirmed {
+        background: linear-gradient(135deg, #007bff 0%, #17a2b8 100%);
+        color: white;
+        box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+    }
+
+    .date-text {
+        font-weight: 700;
+        color: #495057;
+        font-size: 0.95rem;
+    }
+
+    .doctor-name {
+        color: #007bff;
+        font-weight: 700;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .doctor-name:hover {
+        color: #0056b3;
+        text-decoration: underline;
+    }
+
+    .note-text {
+        color: #6c757d;
+        font-style: italic;
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .no-history-section {
+        text-align: center;
+        padding: 80px 40px;
+    }
+
+    .no-history-icon {
+        font-size: 6rem;
+        color: #6c757d;
+        margin-bottom: 30px;
+    }
+
+    .no-history-title {
+        color: #2c3e50;
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 15px;
+        font-family: 'Abhaya Libre', serif;
+    }
+
+    .no-history-description {
+        color: #6c757d;
+        font-size: 1.1rem;
+        margin-bottom: 40px;
+        line-height: 1.6;
+    }
+
+    .back-button {
+        background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        border: none;
+        border-radius: 50px;
+        padding: 15px 40px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .back-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(108, 117, 125, 0.4);
+        background: linear-gradient(135deg, #495057 0%, #343a40 100%);
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .history-card {
+            margin: 10px;
+            border-radius: 15px;
+        }
+        
+        .history-header {
+            padding: 20px 15px;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .history-title {
+            font-size: 1.5rem;
+        }
+        
+        .close-button {
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            padding: 8px;
+        }
+        
+        .history-content {
+            padding: 20px;
+        }
+        
+        .table-cell {
+            padding: 10px 15px;
+            font-size: 0.9rem;
+        }
+        
+        .note-text {
+            max-width: 120px;
+        }
+    }
+</style>
+{{/section}}
+
+<div class="page-container">
+    <div class="container">
+        <div class="history-card">
+            <!-- Header Section -->
+            <div class="history-header">
+                <h1 class="history-title">Medical History</h1>
+                <a href="javascript:history.back()" class="close-button">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            </div>
+
+            <!-- Content Section -->
+            <div class="history-content">
+                {{#if medicalHistory.length}}
+                    <!-- Medical History Table -->
+                    <div class="history-table">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr class="table-header">
+                                    <th class="table-cell">Date</th>
+                                    <th class="table-cell">Time</th>
+                                    <th class="table-cell">Doctor</th>
+                                    <th class="table-cell">Status</th>
+                                    <th class="table-cell">Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each medicalHistory}}
+                                <tr class="table-row">
+                                    <td class="table-cell">
+                                        <div class="date-text">
+                                            {{formatDate date_start}}
+                                        </div>
+                                    </td>
+                                    <td class="table-cell">
+                                        <div class="date-text">
+                                            {{time}}
+                                        </div>
+                                    </td>
+                                    <td class="table-cell">
+                                        <a href="#" class="doctor-name">
+                                            {{veterinarian_name}}
+                                        </a>
+                                    </td>
+                                    <td class="table-cell">
+                                        <span class="status-badge status-{{status}}">
+                                            {{#if (eq status 'completed')}}
+                                                <i class="bi bi-check-circle me-1"></i>Completed
+                                            {{else if (eq status 'confirmed')}}
+                                                <i class="bi bi-clock me-1"></i>Confirmed
+                                            {{else}}
+                                                {{status}}
+                                            {{/if}}
+                                        </span>
+                                    </td>
+                                    <td class="table-cell">
+                                        {{#if note}}
+                                            <div class="note-text" title="{{note}}">
+                                                {{note}}
+                                            </div>
+                                        {{else}}
+                                            <span class="text-muted">No notes</span>
+                                        {{/if}}
+                                    </td>
+                                    
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <a href="javascript:history.back()" class="back-button">
+                            <i class="bi bi-arrow-left me-2"></i>Back to Pet Info
+                        </a>
+                    </div>
+
+                {{else}}
+                    <!-- No Medical History -->
+                    <div class="no-history-section">
+                        <i class="bi bi-journal-medical no-history-icon"></i>
+                        <h2 class="no-history-title">No Medical History Found</h2>
+                        <p class="no-history-description">
+                            This pet doesn't have any medical history yet. Medical records will appear here after completed appointments.
+                        </p>
+                        
+                        <a href="javascript:history.back()" class="back-button">
+                            <i class="bi bi-arrow-left me-2"></i>Back to Pet Info
+                        </a>
+                    </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>
+
+{{#section 'js'}}
+<script>
+function viewDetails(appointmentId) {
+    // You can implement appointment details modal or redirect here
+    alert('View details for appointment ID: ' + appointmentId);
+    // Example: redirect to appointment details page
+    // window.location.href = `/vet/appointment/details/${appointmentId}`;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Add hover effects and animations
+    const tableRows = document.querySelectorAll('.table-row');
+    
+    tableRows.forEach(row => {
+        row.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+        });
+        
+        row.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+    
+    // Tooltip functionality for long notes
+    const noteElements = document.querySelectorAll('.note-text');
+    noteElements.forEach(element => {
+        if (element.scrollWidth > element.clientWidth) {
+            element.style.cursor = 'help';
+            element.addEventListener('click', function() {
+                alert('Full note: ' + this.getAttribute('title'));
+            });
+        }
+    });
+});
+</script>
+{{/section}}

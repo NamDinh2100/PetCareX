@@ -1,0 +1,218 @@
+{{#section 'css'}}
+    <style>
+        .chart-wrapper { 
+            position: relative; 
+            height: 350px; 
+            width: 100%; 
+        }
+        .stat-number { 
+            font-family: 'Abhaya Libre', serif; 
+            font-weight: 700; 
+            color: #2d5bff; 
+        }
+        /* Style riêng cho phần tổng doanh thu */
+        .total-revenue-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+    </style>
+{{/section}}
+
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold">STATISTICAL DASHBOARD</h4>
+        <button id="btnExport" class="btn btn-outline-success shadow-sm">
+            <i class="bi bi-download me-2"></i>Export Report
+        </button>    
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100 rounded-4">
+                <div class="card-body p-4 position-relative">
+                    <div class="d-flex justify-content-between mb-2">
+                        <h5 class="fw-bold text-secondary">Revenue Structure</h5>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="total-revenue-label">Total Revenue</div>
+                        <h2 class="stat-number mb-0" id="totalRevenueDisplay">Loading...</h2> 
+                    </div>
+                    
+                    <div class="chart-wrapper">
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100 rounded-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between mb-3">
+                        <h5 class="fw-bold text-secondary">Top 5 Services</h5>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{#section 'js'}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Dữ liệu từ Backend (giữ nguyên logic cũ)
+            const data = {{{stats}}};
+
+            Chart.defaults.font.family = "'Abhaya Libre', serif";
+            Chart.defaults.color = '#666';
+
+            // --- 1. XỬ LÝ BIỂU ĐỒ TRÒN (PIE) ---
+            
+            // Bước A: Tính tổng doanh thu để hiển thị ra ngoài
+            const totalRevenue = data.pieData.data.reduce((a, b) => a + b, 0);
+            
+            // Format tiền tệ (VD: 2,500 $)
+            const formattedTotal = new Intl.NumberFormat('en-US', { 
+                style: 'currency', 
+                currency: 'USD' 
+            }).format(totalRevenue);
+
+            // Gán vào thẻ HTML
+            document.getElementById('totalRevenueDisplay').innerText = formattedTotal;
+
+            // Bước B: Vẽ biểu đồ với Tooltip %
+            new Chart(document.getElementById('pieChart'), {
+                type: 'pie', // Hoặc 'doughnut' nếu muốn biểu đồ vành khuyên
+                data: {
+                    labels: data.pieData.labels,
+                    datasets: [{
+                        data: data.pieData.data,
+                        backgroundColor: ['#7b83eb', '#fc85ae', '#9b59b6', '#4a90e2', '#e0e0e0'],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'right', 
+                            labels: { usePointStyle: true, boxWidth: 10 } 
+                        },
+                        // CẤU HÌNH TOOLTIP HIỂN THỊ %
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    let value = context.raw;
+                                    // Tính phần trăm: (Giá trị / Tổng) * 100
+                                    let percentage = ((value / totalRevenue) * 100).toFixed(1) + '%';
+                                    
+                                    // Hiển thị: "Service Name: $500 (25.5%)"
+                                    return label + value + ' (' + percentage + ')';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // --- 2. XỬ LÝ BIỂU ĐỒ CỘT (BAR) ---
+            new Chart(document.getElementById('barChart'), {
+                type: 'bar',
+                data: {
+                    labels: data.barData.labels,
+                    datasets: [{
+                        label: 'Revenue',
+                        data: data.barData.data,
+                        backgroundColor: '#7b83eb',
+                        borderRadius: 5,
+                        barThickness: 30,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { borderDash: [5, 5] },
+                            ticks: { callback: function(value) { return value + ' $' } }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            // Biến data này giờ đã chứa thêm 'exportData' (danh sách gốc)
+            const data = {{{stats}}};
+
+            // ... (Phần code vẽ biểu đồ giữ nguyên) ...
+
+            // ---------------------------------------------------------
+            // LOGIC EXPORT DỮ LIỆU GỐC (FULL LIST)
+            // ---------------------------------------------------------
+            document.getElementById('btnExport').addEventListener('click', function() {
+                
+                // 1. Lấy danh sách gốc
+                const fullList = data.exportData;
+
+                if (!fullList || fullList.length === 0) {
+                    alert("No data to export!");
+                    return;
+                }
+
+                // 2. Tạo tiêu đề cột (Header) cho file CSV
+                // Bạn có thể thêm các cột khác nếu trong DB có (ví dụ: id, description...)
+                let csvContent = "ID,Service Name,Base Price,Revenue ($)\n";
+
+                // 3. Duyệt qua từng dòng dữ liệu gốc để ghi vào CSV
+                fullList.forEach(item => {
+                    // Xử lý an toàn dữ liệu (tránh lỗi nếu null/undefined)
+                    const id = item.service_id || ''; 
+                    const name = item.service_name ? `"${item.service_name}"` : ''; // Thêm ngoặc kép để tránh lỗi nếu tên có dấu phẩy
+                    const price = item.base_price || 0;
+                    const revenue = item.revenue || 0;
+
+                    // Ghi dòng: 1, "Spa Service", 50, 5000
+                    csvContent += `${id},${name},${price},${revenue}\n`;
+                });
+
+                // 4. Gọi hàm tải về
+                downloadCSV(csvContent, 'Revenue_Report.csv');
+            });
+
+            // Hàm hỗ trợ tải file (Giữ nguyên)
+            function downloadCSV(csvContent, fileName) {
+                const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement("a");
+                if (link.download !== undefined) { 
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute("href", url);
+                    link.setAttribute("download", fileName);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            }
+        });
+    </script>
+
+    </script>
+{{/section}}

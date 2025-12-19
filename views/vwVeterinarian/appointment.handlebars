@@ -1,0 +1,407 @@
+{{#section 'css'}}
+<style>
+    :root {
+        --primary-blue: #2d6bfd;
+        --edit-red: #ff0033;
+    }
+
+    /* 1. Custom Status Colors using CSS classes based on value */
+    .status-badge {
+        font-size: 0.85rem;
+        padding: 0.5em 1em;
+        text-transform: capitalize; 
+        font-weight: 600;
+        min-width: 100px; 
+        text-align: center;
+        display: inline-block;
+    }
+
+    .status-confirmed { background-color: #cff4fc; color: #3eaac0; border: 1px solid #b6effb; }
+    .status-completed { background-color: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
+
+    /* 2. Styling for inputs and modals to match your design */
+    .search-input-group { width: 350px; }
+    .btn-action-custom {
+        background: white; border: 2px solid #000; border-radius: 50px; font-weight: 600;
+        font-size: 0.85rem; transition: all 0.2s;
+    }
+    .btn-action-custom:hover { background: #000; color: white; }
+
+    .form-control-thick {
+        border: 2px solid #000; border-radius: 1rem; padding: 0.6rem 1rem;
+    }
+
+    .modal-content-thick {
+        border: 2px solid #a8a09e; border-radius: 1rem;
+    }
+
+    /* 3. Custom Modal Header Style */
+    .modal-header-custom {
+        /* Màu nền giống ảnh (Nâu xám) */
+        background-color: #dcdcdc;
+        border-bottom: 2px solid #a8a09e;
+        /* Áp dụng Flexbox để căn giữa theo chiều dọc */
+        display: flex;
+        align-items: center; 
+        justify-content: center;
+        padding: 1rem 1.5rem; /* Tăng padding để có khoảng trống */
+        position: relative;
+    }
+
+    .modal-title-custom {
+        font-weight: 700;
+        text-transform: uppercase;
+        /* Dùng font-family từ hình ảnh (có thể cần import nếu chưa có) */
+        font-family: 'Abhaya Libre', serif; 
+        font-size: 1.5rem;
+        margin-bottom: 0;
+    }
+    
+    /* Style cho Icon Đóng (Giống dấu X màu đỏ trong ảnh) */
+    .custom-close-icon {
+        color: #d32f2f; 
+        font-size: 1.8rem;
+        cursor: pointer;
+        /* Đảm bảo icon được căn giữa với text trong header */
+        line-height: 1; 
+        position: absolute;
+        right: 1.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        transition: color 0.2s;
+    }
+    
+    .custom-close-icon:hover {
+        color: #b71c1c;
+    }
+
+    .form-check { margin-bottom: 8px; padding: 5px 0; }
+    .form-check-input { border: 2px solid #000; cursor: pointer; accent-color: #2d5bff; }
+    .form-check-input:checked { background-color: #2d5bff; border-color: #2d5bff; }
+    .form-check-label { cursor: pointer; margin-left: 8px; color: #333; }
+</style>
+{{/section}}
+
+<div class="container-fluid py-4">
+    <div class="card shadow border-2 rounded-4 overflow-hidden" style="min-height: 600px;">
+        <div class="card-header bg-light p-4 border-bottom">
+            <h5 class="mb-0 fw-bold text-uppercase fs-4" style="font-family: 'Abhaya Libre', serif;">Appointment</h5>
+        </div>
+
+        <div class="table-responsive bg-light flex-grow-1 p-3">
+            <table class="table table-hover align-middle bg-white rounded-3 overflow-hidden shadow-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th class="py-3 ps-4 text-uppercase fw-bold">Customer</th>
+                        <th class="py-3 text-uppercase fw-bold">Date</th>
+                        <th class="py-3 text-uppercase fw-bold">Status</th>
+                        <th class="py-1 pe-4 text-end text-uppercase fw-bold">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="appointmentTableBody">
+                    {{#if schedule.length}}
+                    {{#each schedule}}
+                    <tr>
+                        <td class="ps-4 fw-semibold">{{this.customer_name}}</td>
+                        <td class="format-date-cell" data-raw="{{this.date_start}}">
+                            {{this.date_start}}
+                        </td>
+                        
+                        <td>
+                            <span class="badge rounded-pill status-badge status-{{this.status}}">
+                                {{this.status}}
+                            </span>
+                        </td>
+                        
+                        <td class="text-end pe-3">
+                            {{#if (eq this.pet_id null)}}
+                                <a href="/vet/appointment/pet-info?customer_id={{this.customer_id}}&appointment_id={{this.appointment_id}}" 
+                                    class="btn btn-outline-dark px-3 py-1 me-2">
+                                    Details
+                                </a>
+                            {{else}}
+                                <a href="/vet/appointment/pet-info?pet_id={{this.pet_id}}" 
+                                    class="btn btn-outline-dark px-3 py-1 me-2">
+                                    Details
+                                </a>
+                            {{/if}}
+
+                            {{#unless (eq this.status "completed")}}
+                            <button class="btn btn-outline-success px-3 py-1" data-bs-toggle="modal"
+                                data-bs-target="#prescriptionModal"
+                                data-id="{{this.appointment_id}}"
+                                data-pet-id="{{this.pet_id}}">
+                                Prescription
+                            </button>
+                            {{/unless}}
+
+                            <button class="btn btn-outline-primary px-3 py-1 me-2" data-bs-toggle="modal"
+                                data-bs-target="#receptionModal" 
+                                data-id="{{this.appointment_id}}"
+                                data-pet-id="{{this.pet_id}}"
+                                data-customer="{{this.customer_name}}" 
+                                data-date="{{this.date_start}}"
+                                data-time="{{this.time}}" 
+                                data-note="{{this.note}}"
+                                data-services='{{#if this.services}}{{json this.services}}{{else}}[]{{/if}}'
+                                >
+                                Reception
+                            </button>
+                            
+                            
+                        </td>
+                    </tr>
+                    {{/each}}
+                    {{else}}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">No appointments found</td>
+                    </tr>
+                    {{/if}}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="modal fade" id="receptionModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content modal-content-thick">
+                    
+                    <div class="modal-header modal-header-custom">
+                        <h5 class="modal-title modal-title-custom fs-4">Appointment - Reception</h5>
+                        
+                        <i class="fa-solid fa-circle-xmark custom-close-icon" data-bs-dismiss="modal"></i>
+                    </div>
+                    
+                    <div class="modal-body p-4">
+                        <form>
+                            <input type="hidden" id="receptionId">
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="fw-bold small text-uppercase mb-1">Customer</label>
+                                    <input type="text" class="form-control form-control-thick" id="receptionCustomer" readonly>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label class="fw-bold small text-uppercase mb-1">Time</label>
+                                    <input type="text" class="form-control form-control-thick" id="receptionTime" readonly>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label class="fw-bold small text-uppercase mb-1">Date Start</label>
+                                    <input type="text" class="form-control form-control-thick" id="receptionDate" readonly>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label class="fw-bold small text-uppercase mb-1">Service</label>
+                                    <textarea class="form-control form-control-thick" id="receptionService" rows="3" readonly></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="fw-bold small text-uppercase mb-1">Note</label>
+                                <textarea class="form-control form-control-thick" id="receptionNote" rows="5"></textarea>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <button type="button"
+                                    class="btn btn-outline-success border-2 rounded-4 fw-bold px-4 text-uppercase fs-5">Save
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+        <div class="modal fade" id="prescriptionModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content modal-content-thick">
+                    <div class="modal-header modal-header-custom">
+                        <h5 class="modal-title modal-title-custom fs-4">Prescription</h5>
+                        <i class="fa-solid fa-circle-xmark custom-close-icon" data-bs-dismiss="modal"></i>
+                    </div>
+                    <div class="modal-body p-4">
+                        <form method="POST" action="/vet/appointment/prescription">
+
+                            <div class="mb-4">
+                                <label class="fw-bold small text-uppercase">Medicine</label>
+                                {{#if medicines.length}}
+                                <div
+                                    style="border: 2px solid #000; border-radius: 20px; padding: 20px 40px; background-color: #fff; max-height: 150px; overflow-y: auto;">
+                                    {{#each medicines}}
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="medicine_id" value="{{this.medicine_id}}"
+                                            id="medicine_{{this.medicine_id}}">
+                                        <label class="form-check-label fw-bold" for="medicine_{{this.medicine_id}}">
+                                            {{this.medicine_name}}
+                                        </label>
+                                    </div>
+                                    {{/each}}
+                                </div>
+                                {{else}}
+                                <div class="alert alert-warning">No services available.</div>
+                                {{/if}}
+                            </div>
+
+                            <input type="hidden" id="prescriptionAppointmentId" name="appointment_id" value="">
+                            <input type="hidden" id="prescriptionPetId" name="pet_id" value="">
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label class="fw-bold small text-uppercase mb-1">Symptom</label>
+                                    <input type="text" name="symptoms" class="form-control form-control-thick">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="fw-bold small text-uppercase mb-1">Diagnosis</label>
+                                    <input type="text" name="diagnosis" class="form-control form-control-thick">
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="fw-bold small text-uppercase mb-1">Treatment</label>
+                                <textarea name="treatment" class="form-control form-control-thick" rows="4"></textarea>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="fw-bold small text-uppercase mb-1">Instruction</label>
+                                <textarea name="instruction" class="form-control form-control-thick" rows="4"></textarea>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit"
+                                    class="btn btn-outline-success border-2 rounded-4 fw-bold px-4 text-uppercase fs-5">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{{#section 'js'}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+
+    // Handle prescription form
+    const prescriptionForm = document.querySelector('form[action*="prescription"]');
+    if (prescriptionForm) {
+        prescriptionForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Success!',
+                text: 'Prescription saved successfully.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                e.target.submit();
+            });
+        });
+    }
+
+    // Hàm hỗ trợ format ngày từ chuỗi ISO -> dd/mm/yyyy
+    function formatISODateToDisplay(isoString) {
+        if (!isoString) return '';
+        const date = new Date(isoString);
+        if (isNaN(date)) return isoString; 
+        
+        return date.toLocaleDateString('en-GB'); 
+    }
+
+    // Hàm hỗ trợ format giờ (bỏ giây: 10:00:00 -> 10:00)
+    function formatTimeString(timeString) {
+        if (!timeString) return '';
+        if (timeString.length >= 5) {
+            return timeString.substring(0, 5);
+        }
+        return timeString;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        // 1. XỬ LÝ HIỂN THỊ DATE TRÊN BẢNG (TABLE)
+        const dateCells = document.querySelectorAll('.format-date-cell');
+        dateCells.forEach(cell => {
+            const rawDate = cell.getAttribute('data-raw');
+            cell.textContent = formatISODateToDisplay(rawDate);
+        });
+
+        // 2. XỬ LÝ HIỂN THỊ DỮ LIỆU TRONG MODAL RECEPTION
+        const receptionModal = document.getElementById('receptionModal');
+        if (receptionModal) {
+            receptionModal.addEventListener('show.bs.modal', event => {
+                const button = event.relatedTarget;
+
+                const id = button.getAttribute('data-id');
+                const customer = button.getAttribute('data-customer');
+                const rawDate = button.getAttribute('data-date');
+                const rawTime = button.getAttribute('data-time');
+                const note = button.getAttribute('data-note');
+                const rawServices = button.getAttribute('data-services');
+
+                // Xử lý Services (Hiển thị mỗi service trên một dòng)
+                let serviceText = '';
+                try {
+                    const servicesArray = JSON.parse(rawServices);
+                    if (Array.isArray(servicesArray) && servicesArray.length > 0) {
+                        // Nối các tên dịch vụ lại, mỗi dịch vụ một dòng mới
+                        serviceText = servicesArray.map(s => s.service_name).join('\n');
+                    }
+                } catch (e) {
+                    serviceText = 'Lỗi dữ liệu dịch vụ';
+                }
+
+                // Điền vào các ô input trong modal
+                const modal = receptionModal;
+                modal.querySelector('#receptionId').value = id || '';
+                modal.querySelector('#receptionCustomer').value = customer || '';
+                modal.querySelector('#receptionNote').value = note || '';
+                modal.querySelector('#receptionService').value = serviceText;   
+
+                // Format và điền Date & Time
+                modal.querySelector('#receptionDate').value = formatISODateToDisplay(rawDate);
+                modal.querySelector('#receptionTime').value = formatTimeString(rawTime);
+            });
+        }
+
+        // 2.5 XỬ LÝ HIỂN THỊ DỮ LIỆU TRONG MODAL PRESCRIPTION
+        const prescriptionModal = document.getElementById('prescriptionModal');
+        if (prescriptionModal) {
+            prescriptionModal.addEventListener('show.bs.modal', event => {
+                const button = event.relatedTarget;
+
+                const appointmentId = button.getAttribute('data-id');
+                const petId = button.getAttribute('data-pet-id');
+
+                // Điền vào các hidden input trong form prescription
+                prescriptionModal.querySelector('#prescriptionAppointmentId').value = appointmentId || '';
+                prescriptionModal.querySelector('#prescriptionPetId').value = petId || '';
+            });
+        }
+        
+        // 3. XỬ LÝ SEARCH
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#appointmentTableBody tr');
+
+            rows.forEach(row => {
+                const customerName = row.querySelector('td:first-child')?.textContent.toLowerCase() || '';
+                
+                if (customerName.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+{{/section}}
