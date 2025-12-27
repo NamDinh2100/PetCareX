@@ -6,6 +6,8 @@ import authRoute from './routes/auth.route.js';
 import appointmentRoute from './routes/appointment.route.js';
 import doctorRoute from './routes/doctor.route.js';
 
+import customerRoute from './routes/customer.route.js';
+
 const app = express();
 
 /* ================= BODY PARSER ================= */
@@ -46,6 +48,9 @@ app.use((req, res, next) => {
 
 /* ================= ROUTES ================= */
 app.use('/auth', authRoute);
+
+app.use('/', customerRoute); 
+
 app.use('/appointment', appointmentRoute);
 app.use('/', doctorRoute);
 

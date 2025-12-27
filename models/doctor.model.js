@@ -151,3 +151,33 @@ export function updateAppointmentStatus(id, status) {
     .where('appointment_id', id)
     .update({ status });
 }
+
+
+
+///BAC SI
+export function getAllDoctors() {
+  return db('staff')
+    .where('position', 'Doctor')
+    .select('username', 'full_name');
+}
+
+export function getDoctorSchedules(doctor_username = '') {
+  let q = db('staff as s')
+    .join('history as h', 's.username', 'h.staff_username')
+    .join('branch as b', 'h.branch_id', 'b.branch_id')
+    .leftJoin('appointment as a', 's.username', 'a.staff_username')
+    .where('s.position', 'Doctor');
+
+  if (doctor_username) {
+    q = q.where('s.username', doctor_username);
+  }
+
+  return q.select(
+    's.username',
+    's.full_name',
+    'b.branch_name',
+    'a.appointment_date',
+    'a.appointment_time',
+    'a.status'
+  ).orderBy('s.full_name');
+}

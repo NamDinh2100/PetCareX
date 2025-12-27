@@ -3,13 +3,6 @@ import * as model from '../models/doctor.model.js';
 
 const router = express.Router();
 
-/* Middleware: chỉ cho bác sĩ */
-router.use((req, res, next) => {
-  if (!req.session.username) {
-    return res.redirect('/auth/login');
-  }
-  next();
-});
 
 /* HOME bác sĩ */
 router.get('/doctor/home', (req, res) => {
@@ -81,5 +74,23 @@ router.post('/doctor/appointments/:id/examine', async (req, res) => {
 
   res.redirect('/doctor/appointments');
 });
+
+import * as doctorModel from '../models/doctor.model.js';
+
+
+
+// Xem lịch bác sĩ
+router.get('/customer/doctors', async (req, res) => {
+  const doctorList = await doctorModel.getAllDoctors();
+  const doctor = req.query.doctor || '';
+  const doctors = await doctorModel.getDoctorSchedules(doctor);
+
+  res.render('customer/doctors', {
+    doctors,
+    doctorList,
+    selectedDoctor: doctor
+  });
+});
+
 
 export default router;

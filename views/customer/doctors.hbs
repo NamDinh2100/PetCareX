@@ -1,0 +1,153 @@
+<div class="container py-5">
+
+    {{!-- 1. HEADER & NÚT QUAY VỀ --}}
+    <div class="row align-items-center mb-4">
+        <div class="col-md-6">
+            <h2 class="fw-bold text-primary mb-1">
+                <i class="fas fa-user-md me-2"></i>Lịch trình Bác sĩ
+            </h2>
+            <p class="text-muted mb-0">Tra cứu lịch làm việc và trạng thái đặt hẹn của các bác sĩ.</p>
+        </div>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+            <a href="/home" class="btn btn-outline-secondary rounded-pill hover-shadow">
+                <i class="fas fa-arrow-left me-2"></i>Về trang chính
+            </a>
+        </div>
+    </div>
+
+    {{!-- 2. KHUNG LỌC (FILTER) --}}
+    <div class="card shadow-sm border-0 mb-4 bg-light">
+        <div class="card-body p-4">
+            <form action="" method="GET" class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label class="fw-bold text-dark"><i class="fas fa-filter me-2"></i>Lọc theo:</label>
+                </div>
+                <div class="col-md-4">
+                    <select name="doctor" class="form-select border-0 shadow-sm" onchange="this.form.submit()">
+                        <option value="">-- Tất cả bác sĩ --</option>
+                        {{#each doctorList}}
+                            {{!-- Helper (eq) cần được khai báo ở backend, nếu lỗi hãy dùng if thường --}}
+                            <option value="{{this.username}}" {{#if (eq this.username ../selectedDoctor)}}selected{{/if}}>
+                                BS. {{this.full_name}}
+                            </option>
+                        {{/each}}
+                    </select>
+                </div>
+                <div class="col-auto">
+                    {{!-- Nút này có thể ẩn đi vì mình đã thêm onchange ở select --}}
+                    <button type="submit" class="btn btn-primary px-4 shadow-sm">
+                        Xem lịch
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{!-- 3. BẢNG DỮ LIỆU --}}
+    <div class="card shadow-sm border-0 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-primary text-white">
+                    <tr>
+                        <th scope="col" class="py-3 ps-4">Bác sĩ</th>
+                        <th scope="col" class="py-3">Chi nhánh</th>
+                        <th scope="col" class="py-3">Ngày</th>
+                        <th scope="col" class="py-3">Giờ</th>
+                        <th scope="col" class="py-3 text-center">Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#if doctors.length}}
+                        {{#each doctors}}
+                        <tr>
+                            {{!-- Tên Bác sĩ --}}
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-light rounded-circle p-2 me-3 text-primary border">
+                                        <i class="fas fa-user-md"></i>
+                                    </div>
+                                    <span class="fw-bold text-dark">{{this.full_name}}</span>
+                                </div>
+                            </td>
+
+                            {{!-- Chi nhánh --}}
+                            <td>
+                                <span class="text-muted"><i class="fas fa-map-marker-alt me-1 small"></i>{{this.branch_name}}</span>
+                            </td>
+
+                            {{!-- Ngày (Class date-format để JS xử lý) --}}
+                            <td class="date-format fw-bold text-dark" data-date="{{this.appointment_date}}">
+                                {{this.appointment_date}}
+                            </td>
+
+                            {{!-- Giờ --}}
+                            <td>
+                                <span class="badge bg-info bg-opacity-10 text-info border border-info">
+                                    <i class="far fa-clock me-1"></i>{{this.appointment_time}}
+                                </span>
+                            </td>
+
+                            {{!-- Trạng thái (Tự động đổi màu bằng JS bên dưới) --}}
+                            <td class="text-center">
+                                <span class="status-badge badge rounded-pill px-3" data-status="{{this.status}}">
+                                    {{this.status}}
+                                </span>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    {{else}}
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="far fa-calendar-times fa-3x mb-3 opacity-50"></i>
+                                <p>Không tìm thấy lịch trình nào phù hợp.</p>
+                            </td>
+                        </tr>
+                    {{/if}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{{!-- SCRIPT XỬ LÝ GIAO DIỆN --}}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        
+        // 1. Format Ngày tháng (dd/mm/yyyy)
+        document.querySelectorAll('.date-format').forEach(el => {
+            const rawDate = el.getAttribute('data-date');
+            if (rawDate) {
+                const dateObj = new Date(rawDate);
+                if (!isNaN(dateObj.getTime())) {
+                    el.innerText = dateObj.toLocaleDateString('vi-VN');
+                }
+            }
+        });
+
+        // 2. Tô màu cho Trạng thái (Status Badge)
+        document.querySelectorAll('.status-badge').forEach(el => {
+            const status = el.getAttribute('data-status').toLowerCase();
+            
+            // Xóa class cũ
+            el.className = 'status-badge badge rounded-pill px-3';
+
+            if (status.includes('scheduled') || status.includes('pending')) {
+                el.classList.add('bg-warning', 'text-dark'); // Màu vàng: Chờ/Đã lên lịch
+            } else if (status.includes('completed') || status.includes('confirmed')) {
+                el.classList.add('bg-success'); // Màu xanh: Hoàn thành
+            } else if (status.includes('cancelled')) {
+                el.classList.add('bg-danger'); // Màu đỏ: Hủy
+            } else {
+                el.classList.add('bg-secondary'); // Màu xám: Khác
+            }
+        });
+    });
+</script>
+
+<style>
+    .hover-shadow:hover {
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+        background-color: #f8f9fa;
+        color: #0d6efd;
+    }
+</style>
