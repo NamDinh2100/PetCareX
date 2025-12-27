@@ -1,0 +1,128 @@
+<div class="container py-5">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <h2 class="fw-bold text-primary">
+                <i class="fas fa-user-md me-2"></i>Xin chào, Bác sĩ {{doctor.full_name}}! 👋
+            </h2>
+            <p class="text-muted mb-0">Chúc bác sĩ một ngày làm việc hiệu quả. Dưới đây là tổng quan công việc hôm nay.</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <span class="badge bg-light text-dark border p-2">
+                <i class="far fa-calendar-alt me-1"></i> Hôm nay: <span id="currentDate" class="fw-bold"></span>
+            </span>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 border-start border-4 border-primary h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1 text-uppercase small fw-bold">Lịch hẹn hôm nay</p>
+                            <h3 class="mb-0 fw-bold text-dark">--</h3> </div>
+                        <div class="icon-circle bg-primary bg-opacity-10 text-primary p-3 rounded-circle">
+                            <i class="fas fa-calendar-check fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 border-start border-4 border-warning h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1 text-uppercase small fw-bold">Đang chờ khám</p>
+                            <h3 class="mb-0 fw-bold text-dark">--</h3>
+                        </div>
+                        <div class="icon-circle bg-warning bg-opacity-10 text-warning p-3 rounded-circle">
+                            <i class="fas fa-hourglass-half fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 border-start border-4 border-success h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1 text-uppercase small fw-bold">Đã hoàn thành</p>
+                            <h3 class="mb-0 fw-bold text-dark">--</h3>
+                        </div>
+                        <div class="icon-circle bg-success bg-opacity-10 text-success p-3 rounded-circle">
+                            <i class="fas fa-check-circle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h5 class="mb-3 fw-bold text-secondary border-start border-4 border-info ps-2">Chức năng quản lý</h5>
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+            <a href="/doctor/appointments" class="text-decoration-none">
+                <div class="card h-100 shadow-sm hover-card border-0">
+                    <div class="card-body text-center py-5">
+                        <div class="mb-3 text-primary">
+                            <i class="fas fa-notes-medical fa-4x"></i>
+                        </div>
+                        <h4 class="card-title fw-bold text-dark">Lịch hẹn & Khám bệnh</h4>
+                        <p class="card-text text-muted">Xem danh sách bệnh nhân hôm nay và tiến hành khám.</p>
+                        <button class="btn btn-outline-primary rounded-pill px-4 mt-2">Truy cập ngay</button>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <a href="#" class="text-decoration-none cursor-not-allowed">
+                <div class="card h-100 shadow-sm border-0 bg-light"> <div class="card-body text-center py-5 opacity-50">
+                        <div class="mb-3 text-secondary">
+                            <i class="fas fa-pills fa-4x"></i>
+                        </div>
+                        <h4 class="card-title fw-bold text-secondary">Kho thuốc</h4>
+                        <p class="card-text text-muted">Tra cứu tồn kho và danh mục thuốc (Đang phát triển).</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <a href="#" class="text-decoration-none"> <div class="card h-100 shadow-sm hover-card border-0">
+                    <div class="card-body text-center py-5">
+                        <div class="mb-3 text-info">
+                            <i class="fas fa-user-edit fa-4x"></i>
+                        </div>
+                        <h4 class="card-title fw-bold text-dark">Thông tin cá nhân</h4>
+                        <p class="card-text text-muted">Xem và cập nhật thông tin tài khoản bác sĩ.</p>
+                        <button class="btn btn-outline-info rounded-pill px-4 mt-2">Xem hồ sơ</button>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+{{!-- Script nhỏ để hiển thị ngày hiện tại --}}
+<script>
+    const options = { weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric' };
+    document.getElementById('currentDate').innerText = new Date().toLocaleDateString('vi-VN', options);
+</script>
+
+<style>
+    /* Hiệu ứng hover cho Card */
+    .hover-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+        border: 1px solid #0d6efd !important;
+    }
+    .cursor-not-allowed {
+        cursor: not-allowed;
+    }
+</style>

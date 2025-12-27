@@ -1,0 +1,47 @@
+<h2>ĐẶT LỊCH DỊCH VỤ</h2>
+
+<form method="POST" action="/appointment">
+
+  <label>Thú cưng</label>
+  <select name="petId" required>
+    {{#each pets}}
+      <option value="{{pet_id}}">{{name}}</option>
+    {{/each}}
+  </select>
+
+  <label>Chi nhánh</label>
+  <select id="branch" name="branchId" required>
+    <option value="">-- Chọn chi nhánh --</option>
+    {{#each branches}}
+      <option value="{{branch_id}}">{{branch_name}}</option>
+    {{/each}}
+  </select>
+
+  <label>Dịch vụ</label>
+  <select id="services" name="serviceIds" multiple required></select>
+
+  <label>Ngày</label>
+  <input type="date" name="date" required>
+
+  <label>Giờ</label>
+  <input type="time" name="time" required>
+
+  <button type="submit">Xác nhận đặt lịch</button>
+</form>
+
+<script>
+document.getElementById('branch').addEventListener('change', async function () {
+  const res = await fetch(`/appointment/services?branchId=${this.value}`);
+  const services = await res.json();
+
+  const select = document.getElementById('services');
+  select.innerHTML = '';
+
+  services.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.service_id;
+    opt.textContent = s.service_name;
+    select.appendChild(opt);
+  });
+});
+</script>

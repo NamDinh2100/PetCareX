@@ -1,0 +1,93 @@
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="text-primary fw-bold mb-1">
+                <i class="fas fa-calendar-check me-2"></i>Lịch hẹn hôm nay
+            </h2>
+            <p class="text-muted mb-0">Danh sách các ca khám bệnh được phân công.</p>
+        </div>
+        <div>
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Tìm tên thú cưng...">
+                <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            {{#if list.length}}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-secondary">
+                            <tr>
+                                <th class="ps-4" style="width: 15%">Giờ hẹn</th>
+                                <th style="width: 25%">Thú cưng</th>
+                                <th style="width: 20%">Ngày</th>
+                                <th style="width: 20%">Trạng thái</th>
+                                <th class="text-end pe-4" style="width: 20%">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each list}}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-square bg-light text-primary rounded-3 me-3 p-2 text-center" style="width: 40px;">
+                                            <i class="far fa-clock"></i>
+                                        </div>
+                                        <span class="fw-bold text-dark">{{appointment_time}}</span>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <span class="fw-bold text-primary">{{pet_name}}</span>
+                                </td>
+
+                                <td class="text-muted">
+                                    {{appointment_date}}
+                                </td>
+
+                                <td>
+                                    {{!-- Logic hiển thị màu badge dựa trên text status --}}
+                                    <span class="badge rounded-pill 
+                                        {{#if (eq status 'Scheduled')}}bg-primary{{/if}}
+                                        {{#if (eq status 'Confirmed')}}bg-info text-dark{{/if}}
+                                        {{#if (eq status 'Completed')}}bg-success{{/if}}
+                                        {{#if (eq status 'Cancelled')}}bg-danger{{/if}}
+                                        {{#if (eq status 'Need re-exam')}}bg-warning text-dark{{/if}}
+                                        px-3 py-2">
+                                        {{status}}
+                                    </span>
+                                </td>
+
+                                <td class="text-end pe-4">
+                                    {{#if staff_username}}
+                                        {{!-- Nếu đã có bác sĩ nhận (là mình) -> Tiếp tục khám --}}
+                                        <a href="/doctor/appointments/{{appointment_id}}/examine" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-stethoscope me-1"></i> Tiếp tục khám
+                                        </a>
+                                    {{else}}
+                                        {{!-- Nếu chưa có bác sĩ -> Nhận ca --}}
+                                        <a href="/doctor/appointments/{{appointment_id}}/examine" class="btn btn-primary btn-sm shadow-sm">
+                                            <i class="fas fa-user-check me-1"></i> Nhận ca & Khám
+                                        </a>
+                                    {{/if}}
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            {{else}}
+                <div class="text-center py-5">
+                    <div class="mb-3 text-muted opacity-50">
+                        <i class="fas fa-calendar-day fa-4x"></i>
+                    </div>
+                    <h5 class="fw-bold text-secondary">Không có lịch hẹn nào</h5>
+                    <p class="text-muted">Hiện tại bác sĩ chưa có lịch hẹn nào trong danh sách.</p>
+                </div>
+            {{/if}}
+        </div>
+    </div>
+</div>
