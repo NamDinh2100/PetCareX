@@ -1,0 +1,253 @@
+{{#section 'css'}}
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .sidebar {
+        min-height: 100vh;
+        background: #212529;
+        color: white;
+    }
+
+    .nav-link {
+        color: rgba(255, 255, 255, 0.7);
+        border-radius: 5px;
+        margin: 5px 0;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+        color: white;
+        background: #0d6efd;
+    }
+
+    .card-stats {
+        border: none;
+        border-radius: 12px;
+        transition: transform 0.2s;
+    }
+
+    .card-stats:hover {
+        transform: translateY(-5px);
+    }
+
+    .product-img {
+        width: 45px;
+        height: 45px;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    .status-pill {
+        font-size: 0.75rem;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+</style>
+
+
+{{/section}}
+
+
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3">
+            <div class="d-flex align-items-center mb-4 px-2">
+                <i class="fas fa-store fs-4 text-primary me-2"></i>
+                <span class="fs-5 fw-bold">SHOP MANAGER</span>
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-chart-line me-2"></i> Tổng quan</a>
+                </li>
+                <li class="nav-item"><a class="nav-link active" href="#"><i class="fas fa-box me-2"></i> Sản phẩm</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-shopping-cart me-2"></i> Đơn hàng</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-users me-2"></i> Khách hàng</a></li>
+                <li class="nav-item mt-4">
+                    <hr class="bg-secondary">
+                </li>
+                <li class="nav-item"><a class="nav-link text-danger" href="#"><i class="fas fa-sign-out-alt me-2"></i>
+                        Đăng xuất</a></li>
+            </ul>
+        </nav>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold">Danh sách sản phẩm</h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0 text-muted">
+                            <li class="breadcrumb-item">Admin</li>
+                            <li class="breadcrumb-item active">Kho hàng</li>
+                        </ol>
+                    </nav>
+                </div>
+                <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                    <i class="fas fa-plus me-2"></i>Thêm sản phẩm
+                </button>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card card-stats shadow-sm p-3">
+                        <div class="d-flex align-items-center text-primary mb-2">
+                            <i class="fas fa-boxes fs-4 me-2"></i> <span class="fw-bold uppercase small">Tổng mặt
+                                hàng</span>
+                        </div>
+                        <h3 class="mb-0">1,482</h3>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card card-stats shadow-sm p-3 border-start border-warning border-4">
+                        <div class="d-flex align-items-center text-warning mb-2">
+                            <i class="fas fa-exclamation-triangle fs-4 me-2"></i> <span class="fw-bold small">SẮP HẾT
+                                HÀNG</span>
+                        </div>
+                        <h3 class="mb-0">15</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i
+                                        class="fas fa-search text-muted"></i></span>
+                                <input type="text" class="form-control bg-light border-start-0"
+                                    placeholder="Tìm theo tên, SKU hoặc danh mục...">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select bg-light">
+                                <option selected>Tất cả danh mục</option>
+                                <option>Thức ăn</option>
+                                <option>Phụ kiện</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Sản phẩm</th>
+                                <th>Danh mục</th>
+                                <th>Giá bán</th>
+                                <th>Tồn kho</th>
+                                <th>Trạng thái</th>
+                                <th class="text-end pe-4">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <img src="https://placehold.co/50x50" class="product-img me-3">
+                                        <div>
+                                            <div class="fw-bold text-dark">Hạt Me-O cho mèo (1.5kg)</div>
+                                            <small class="text-muted font-monospace">SKU: MO-12345</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-secondary-subtle text-secondary">Thức ăn</span></td>
+                                <td class="fw-bold">185.000₫</td>
+                                <td><span class="fw-semibold">120</span></td>
+                                <td><span class="status-pill bg-success-subtle text-success border border-success">Đang
+                                        bán</span></td>
+                                <td class="text-end pe-4">
+                                    <button class="btn btn-sm btn-outline-primary me-1"><i
+                                            class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <img src="https://placehold.co/50x50" class="product-img me-3">
+                                        <div>
+                                            <div class="fw-bold text-dark">Đồ chơi xương cao su</div>
+                                            <small class="text-muted font-monospace">SKU: TOY-992</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-secondary-subtle text-secondary">Đồ chơi</span></td>
+                                <td class="fw-bold">45.000₫</td>
+                                <td><span class="text-danger fw-bold">5</span></td>
+                                <td><span class="status-pill bg-warning-subtle text-warning border border-warning">Sắp
+                                        hết hàng</span></td>
+                                <td class="text-end pe-4">
+                                    <button class="btn btn-sm btn-outline-primary me-1"><i
+                                            class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer bg-white d-flex justify-content-between align-items-center py-3">
+                    <span class="small text-muted">Hiển thị 10 trong số 1,482</span>
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item disabled"><a class="page-link" href="#"><i
+                                    class="fas fa-chevron-left"></i></a></li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Thêm sản phẩm mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="productForm">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold small">Tên sản phẩm</label>
+                            <input type="text" class="form-control" placeholder="Ví dụ: Xương gặm sạch răng">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small">Mã SKU</label>
+                            <input type="text" class="form-control" placeholder="SKU-XXX">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small">Danh mục</label>
+                            <select class="form-select">
+                                <option selected disabled>Chọn danh mục...</option>
+                                <option>Thức ăn</option>
+                                <option>Vệ sinh</option>
+                                <option>Phụ kiện</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small">Giá bán (VNĐ)</label>
+                            <input type="number" class="form-control" placeholder="0.000">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold small">Mô tả sản phẩm</label>
+                            <textarea class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy bỏ</button>
+                <button type="button" class="btn btn-primary px-4">Lưu sản phẩm</button>
+            </div>
+        </div>
+    </div>
+</div>

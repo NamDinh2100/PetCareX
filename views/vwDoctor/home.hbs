@@ -1,3 +1,20 @@
+{{#section 'css'}}
+<style>
+    /* Hiệu ứng hover cho Card */
+    .hover-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+        border: 1px solid #0d6efd !important;
+    }
+    .cursor-not-allowed {
+        cursor: not-allowed;
+    }
+</style>
+{{/section}}    
+
 <div class="container py-5">
     <div class="row mb-4 align-items-center">
         <div class="col-md-8">
@@ -106,23 +123,11 @@
     </div>
 </div>
 
+{{#section 'js'}}
 {{!-- Script nhỏ để hiển thị ngày hiện tại --}}
 <script>
     const options = { weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric' };
     document.getElementById('currentDate').innerText = new Date().toLocaleDateString('vi-VN', options);
 </script>
 
-<style>
-    /* Hiệu ứng hover cho Card */
-    .hover-card {
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .hover-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
-        border: 1px solid #0d6efd !important;
-    }
-    .cursor-not-allowed {
-        cursor: not-allowed;
-    }
-</style>
+{{/section}}
