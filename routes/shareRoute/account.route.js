@@ -1,5 +1,6 @@
 import express from 'express';
 import * as userModel from '../../models/user.model.js';
+import * as branchModel from '../../models/branch.model.js';
 
 const router = express.Router();
 
@@ -27,11 +28,13 @@ router.post('/signin', async function (req, res) {
     }
 
     const staff = await userModel.findStaffByUserName(user.username);
-    
+    console.log('Staff:', staff);
     req.session.isAuth = true;
     let url = '/';
 
     if (staff) {
+        const branch = await branchModel.findBrachById(staff.branch_id);
+
         if (staff.position === 'Branch Manager') 
             url = '/manager';
         else if (staff.position === 'Receptionist') 
@@ -42,21 +45,63 @@ router.post('/signin', async function (req, res) {
             url = '/saler';
         
         req.session.authUser = staff;
-    }
-
-    else if (customer) {
+        req.session.branch = branch;
+    } else {
         const customer = await userModel.findCustomerByUserId(user.id);
-        req.session.authUser = customer;
+        if (customer) {
+            req.session.authUser = {
+                ...customer,
+                full_name: user.full_name,
+                email: user.email,
+                phone_number: user.phone_number
+            };
+            url = '/customer';
+        }
     }
-
+    console.log('Auth User:', req.session.authUser);
     const retUrl = req.session.retUrl || url;
     delete req.session.retUrl;
     res.redirect(retUrl);
 });
 
-router.post('/signup', function (req, res) {
-    // Xử lý đăng ký ở đây
-    res.send('Đăng ký thành công');
+router.post('/signup', async function (req, res) {
+    const { username, email, password, name, phone, gender, dob } = req.body;
+
+    const existUser = await userModel.findUserByUsername(username);
+    if (existUser) {
+        return res.render('vwAccount/signup', {
+            error: 'Tên đăng nhập đã tồn tại!'
+        });
+    }
+
+    const accountData = {
+        username: username,
+        password: password
+    };
+
+    let genderCode = 'M';
+    if (gender === 'Nữ') genderCode = 'F';
+
+    const customerData = {
+        username: username, 
+        full_name: name,
+        email: email,
+        phone_number: phone,
+        gender: genderCode,
+        date_of_birth: dob, 
+        membership_level: 'Basic',
+    };
+
+    try {
+        await userModel.registerCustomer(accountData, customerData);
+        res.redirect('/signin?success=true');
+        
+    } catch (err) {
+        console.error("Lỗi đăng ký:", err);
+        res.render('vwAccount/signup', {
+            error: 'Đã có lỗi xảy ra. Vui lòng kiểm tra lại thông tin.'
+        });
+    }
 });
 
 router.post('/signout', function (req, res) {

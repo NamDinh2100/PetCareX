@@ -1,0 +1,142 @@
+<div class="py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Dashboard Bán hàng</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active">Tổng quan</li>
+                </ol>
+            </nav>
+        </div>
+        <div>
+            <span class="text-muted me-2">
+                <i class="bi bi-calendar3 me-1"></i>
+                Hôm nay: {{currentDate}}
+            </span>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card card-modern bg-gradient-primary">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="text-xs fw-bold text-white text-uppercase mb-1">Tổng sản phẩm</div>
+                            <div class="h5 mb-0 fw-bold text-white">{{totalProducts}}</div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="stat-icon-wrapper">
+                                <i class="bi bi-box-seam fs-3 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card card-modern bg-gradient-success">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="text-xs fw-bold text-white text-uppercase mb-1">Trong kho</div>
+                            <div class="h5 mb-0 fw-bold text-white">{{inStockProducts}}</div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="stat-icon-wrapper">
+                                <i class="bi bi-check-circle fs-3 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card card-modern bg-gradient-warning">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="text-xs fw-bold text-white text-uppercase mb-1">Sắp hết</div>
+                            <div class="h5 mb-0 fw-bold text-white">{{lowStockProducts}}</div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="stat-icon-wrapper">
+                                <i class="bi bi-exclamation-triangle fs-3 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card card-modern bg-gradient-info">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="text-xs fw-bold text-white text-uppercase mb-1">Đơn hàng hôm nay</div>
+                            <div class="h5 mb-0 fw-bold text-white">{{todayOrders}}</div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="stat-icon-wrapper">
+                                <i class="bi bi-cart-check fs-3 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions & Recent Products -->
+    <div class="row g-4">
+        <!-- Quick Actions -->
+        <div class="col-lg-4">
+            <div class="card card-modern">
+                <div class="card-header bg-white py-3">
+                    <h6 class="m-0 fw-bold text-primary">Thao tác nhanh</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <a href="/saler/products" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-2"></i>Thêm sản phẩm mới
+                        </a>
+                        <a href="/saler/orders" class="btn btn-outline-primary">
+                            <i class="bi bi-cart-plus me-2"></i>Tạo đơn hàng
+                        </a>
+                        <a href="/saler/inventory" class="btn btn-outline-secondary">
+                            <i class="bi bi-clipboard-check me-2"></i>Kiểm tra tồn kho
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card card-modern mt-4">
+                <div class="card-header bg-white py-3">
+                    <h6 class="m-0 fw-bold text-primary">Thông báo</h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item px-0 border-0">
+                            <div class="d-flex align-items-center">
+                                <div class="text-warning me-3">
+                                    <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold">Sản phẩm sắp hết hàng</div>
+                                    <small class="text-muted">{{lowStockProducts}} sản phẩm cần nhập thêm</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+       
+    </div>
+</div>

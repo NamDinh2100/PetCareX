@@ -1,0 +1,169 @@
+<div class="py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Quản lý sản phẩm</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/saler">Tổng quan</a></li>
+                    <li class="breadcrumb-item active">Sản phẩm</li>
+                </ol>
+            </nav>
+        </div>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+            <i class="bi bi-plus-circle me-2"></i>Thêm sản phẩm
+        </button>
+    </div>
+
+    <!-- Products Table -->
+    <div class="card card-modern">
+        <div class="card-header bg-white py-3">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text" class="form-control bg-light border-start-0"
+                            placeholder="Tìm kiếm sản phẩm...">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select bg-light">
+                        <option selected>Tất cả loại</option>
+                        <option>Food</option>
+                        <option>Accessory</option>
+                        <option>Medicine</option>
+                        <option>Toy</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select bg-light">
+                        <option selected>Tất cả trạng thái</option>
+                        <option>Còn hàng</option>
+                        <option>Sắp hết</option>
+                        <option>Hết hàng</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-modern mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Sản phẩm</th>
+                            <th>Loại</th>
+                            <th>Mô tả</th>
+                            <th>Giá bán</th>
+                            <th>Tồn kho</th>
+                            <th class="text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#if products}}
+                        {{#each products}}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold">{{this.product_name}}</div>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark">{{this.product_type}}</span>
+                            </td>
+                            <td>
+                                <small class="text-muted">{{this.description}}</small>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-success">{{this.selling_price}}đ</span>
+                            </td>
+                            <td>
+                                <span class="fw-bold">{{this.stock_quantity}}</span>
+                            </td>
+                            
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" title="Xóa">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {{/each}}
+                        {{else}}
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                                <p class="mb-0">Chưa có sản phẩm nào</p>
+                            </td>
+                        </tr>
+                        {{/if}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Product Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="addProductModalLabel">
+                    <i class="bi bi-plus-circle me-2"></i>Thêm sản phẩm mới
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/saler/add-product" method="POST">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="product_name" class="form-label fw-bold">Tên sản phẩm <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="product_name" name="product_name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="product_type" class="form-label fw-bold">Loại sản phẩm <span
+                                    class="text-danger">*</span></label>
+                            <select class="form-select" id="product_type" name="product_type" required>
+                                <option value="">Chọn loại...</option>
+                                <option value="Food">Thức ăn</option>
+                                <option value="Accessory">Phụ kiện</option>
+                                <option value="Medicine">Thuốc</option>
+                                <option value="Toy">Đồ chơi</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="description" class="form-label fw-bold">Mô tả</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="selling_price" class="form-label fw-bold">Giá bán <span
+                                    class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="selling_price" name="selling_price"
+                                    min="0" required>
+                                <span class="input-group-text">đ</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="stock_quantity" class="form-label fw-bold">Số lượng <span
+                                    class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="stock_quantity" name="stock_quantity" min="0"
+                                required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>Thêm sản phẩm
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

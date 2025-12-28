@@ -1,0 +1,270 @@
+<div class="d-sm-flex align-items-center justify-content-between mb-4 pt-4">
+    <div>
+        
+        <h1 class="h3 mb-0 text-gray-800 fw-bold">Quản lý hóa đơn</h1>
+    </div>
+    <button class="btn btn-outline-secondary" onclick="location.reload()">
+        <i class="bi bi-arrow-clockwise me-2"></i>Làm mới
+    </button>
+</div>
+
+{{#if error}}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>{{error}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+{{/if}}
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card card-modern border-0 border-start border-warning border-4 shadow-sm py-2">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-xs fw-bold text-warning text-uppercase mb-1">Hóa đơn chờ xử lý</div>
+                        <div class="h4 mb-0 fw-bold text-dark">{{pendingInvoices.length}}</div>
+                    </div>
+                    <i class="bi bi-hourglass-split fs-2 text-gray-300 opacity-25"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card card-modern border-0 border-start border-primary border-4 shadow-sm py-2">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-xs fw-bold text-primary text-uppercase mb-1">Hóa đơn đang xử lý</div>
+                        <div class="h4 mb-0 fw-bold text-dark">{{myInvoices.length}}</div>
+                    </div>
+                    <i class="bi bi-receipt-cutoff fs-2 text-gray-300 opacity-25"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hóa đơn chờ xử lý -->
+<div class="card card-modern shadow-sm mb-4">
+    <div class="card-header bg-white border-bottom py-3">
+        <h5 class="mb-0 fw-bold text-warning">
+            <i class="bi bi-hourglass-split me-2"></i>Hóa đơn chờ xử lý
+        </h5>
+        <p class="mb-0 text-muted small">Danh sách hóa đơn chưa có nhân viên tiếp nhận</p>
+    </div>
+    <div class="card-body p-0">
+        {{#if pendingInvoices.length}}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">Mã HĐ</th>
+                            <th>Khách hàng</th>
+                            <th>Thú cưng</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái TT</th>
+                            <th>Thời gian tạo</th>
+                            <th class="text-center pe-4">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each pendingInvoices}}
+                        <tr>
+                            <td class="ps-4">
+                                <span class="badge bg-light text-dark fw-bold">#{{invoice_id}}</span>
+                            </td>
+                            <td>
+                                <div class="fw-bold">{{customer_name}}</div>
+                                <small class="text-muted">{{phone_number}}</small>
+                            </td>
+                            <td>
+                                <span class="text-primary fw-bold">{{pet_name}}</span>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-success">{{total_amount}} VNĐ</span>
+                            </td>
+                            <td>
+                                {{#if (eq payment_status 'Paid')}}
+                                    <span class="badge bg-success">Đã thanh toán</span>
+                                {{/if}}
+                                {{#if (eq payment_status 'Pending')}}
+                                    <span class="badge bg-warning text-dark">Chờ thanh toán</span>
+                                {{/if}}
+                                {{#if (eq payment_status 'Cancelled')}}
+                                    <span class="badge bg-danger">Đã hủy</span>
+                                {{/if}}
+                            </td>
+                            <td>
+                                <small class="text-muted">{{formatDate created_at}}</small>
+                            </td>
+                            <td class="text-center pe-4">
+                                <button class="btn btn-sm btn-primary" onclick="assignInvoice({{invoice_id}})">
+                                    <i class="bi bi-hand-thumbs-up me-1"></i>Nhận xử lý
+                                </button>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        {{else}}
+            <div class="text-center py-5">
+                <div class="mb-3 text-muted opacity-50">
+                    <i class="bi bi-inbox fs-1"></i>
+                </div>
+                <h6 class="fw-bold text-secondary">Không có hóa đơn chờ xử lý</h6>
+                <p class="text-muted small">Tất cả hóa đơn đã được tiếp nhận</p>
+            </div>
+        {{/if}}
+    </div>
+</div>
+
+<!-- Hóa đơn đang xử lý -->
+<div class="card card-modern shadow-sm">
+    <div class="card-header bg-white border-bottom py-3">
+        <h5 class="mb-0 fw-bold text-primary">
+            <i class="bi bi-receipt-cutoff me-2"></i>Hóa đơn của tôi
+        </h5>
+        <p class="mb-0 text-muted small">Danh sách hóa đơn bạn đang xử lý</p>
+    </div>
+    <div class="card-body p-0">
+        {{#if myInvoices.length}}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">Mã HĐ</th>
+                            <th>Khách hàng</th>
+                            <th>Thú cưng</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái TT</th>
+                            <th>Cập nhật lần cuối</th>
+                            <th class="text-center pe-4">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each myInvoices}}
+                        <tr>
+                            <td class="ps-4">
+                                <span class="badge bg-light text-dark fw-bold">#{{invoice_id}}</span>
+                            </td>
+                            <td>
+                                <div class="fw-bold">{{customer_name}}</div>
+                                <small class="text-muted">{{phone_number}}</small>
+                            </td>
+                            <td>
+                                <span class="text-primary fw-bold">{{pet_name}}</span>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-success">{{total_amount}} VNĐ</span>
+                            </td>
+                            <td>
+                                {{#if (eq payment_status 'Paid')}}
+                                    <span class="badge bg-success">Đã thanh toán</span>
+                                {{/if}}
+                                {{#if (eq payment_status 'Pending')}}
+                                    <span class="badge bg-warning text-dark">Chờ thanh toán</span>
+                                {{/if}}
+                                {{#if (eq payment_status 'Cancelled')}}
+                                    <span class="badge bg-danger">Đã hủy</span>
+                                {{/if}}
+                            </td>
+                            <td>
+                                <small class="text-muted">{{formatDate updated_at}}</small>
+                            </td>
+                            <td class="text-center pe-4">
+                                {{#if (eq payment_status 'Pending')}}
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button class="btn btn-success" onclick="updatePayment({{invoice_id}}, 'Paid')">
+                                            <i class="bi bi-check-circle me-1"></i>Đã TT
+                                        </button>
+                                        <button class="btn btn-danger" onclick="updatePayment({{invoice_id}}, 'Cancelled')">
+                                            <i class="bi bi-x-circle me-1"></i>Hủy
+                                        </button>
+                                    </div>
+                                {{/if}}
+                                {{#if (eq payment_status 'Paid')}}
+                                    <span class="text-success small"><i class="bi bi-check-circle-fill me-1"></i>Hoàn tất</span>
+                                {{/if}}
+                                {{#if (eq payment_status 'Cancelled')}}
+                                    <span class="text-danger small"><i class="bi bi-x-circle-fill me-1"></i>Đã hủy</span>
+                                {{/if}}
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        {{else}}
+            <div class="text-center py-5">
+                <div class="mb-3 text-muted opacity-50">
+                    <i class="bi bi-clipboard-x fs-1"></i>
+                </div>
+                <h6 class="fw-bold text-secondary">Chưa có hóa đơn nào</h6>
+                <p class="text-muted small">Bạn chưa tiếp nhận hóa đơn nào</p>
+            </div>
+        {{/if}}
+    </div>
+</div>
+
+{{#section 'js'}}
+<script>
+    // Nhận hóa đơn để xử lý
+    async function assignInvoice(invoiceId) {
+        if (!confirm('Bạn có chắc muốn nhận hóa đơn này để xử lý?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/receptionist/invoices/${invoiceId}/assign`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert('Đã nhận hóa đơn thành công!');
+                location.reload();
+            } else {
+                alert('Lỗi: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi nhận hóa đơn');
+        }
+    }
+
+    // Cập nhật trạng thái thanh toán
+    async function updatePayment(invoiceId, status) {
+        const statusText = status === 'Paid' ? 'đã thanh toán' : 'hủy';
+        if (!confirm(`Xác nhận cập nhật hóa đơn ${statusText}?`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/receptionist/invoices/${invoiceId}/payment`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert('Đã cập nhật trạng thái thanh toán!');
+                location.reload();
+            } else {
+                alert('Lỗi: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi cập nhật trạng thái');
+        }
+    }
+</script>
+{{/section}}
