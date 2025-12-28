@@ -126,6 +126,9 @@ app.use('/receptionist', isAuth, isReceptionist, receptionistRoute);
 app.use('/saler', isAuth, isSaler, salerRoute);
 app.use('/manager', isAuth, isManager, managerRoute);
 
+
+app.use('/customer', customerRoute);
+
 // CUSTOMER ROUTE
 
 /* ================= START ================= */

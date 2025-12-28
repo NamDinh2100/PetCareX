@@ -47,7 +47,7 @@ router.post('/signin', async function (req, res) {
         req.session.authUser = staff;
         req.session.branch = branch;
     } else {
-        const customer = await userModel.findCustomerByUserId(user.id);
+        const customer = await userModel.findCustomerByUsername(user.username);
         if (customer) {
             req.session.authUser = {
                 ...customer,
