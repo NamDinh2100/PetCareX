@@ -1,6 +1,6 @@
 <div class="container py-5">
     
-    {{!-- 1. HEADER & NÚT QUAY VỀ --}}
+    {{!-- 1. HEADER & NÚT QUAY VỀ (Giữ nguyên) --}}
     <div class="row justify-content-center mb-4">
         <div class="col-lg-8">
             <div class="d-flex justify-content-between align-items-center">
@@ -10,7 +10,7 @@
                     </h2>
                     <p class="text-muted small mb-0">Chọn chi nhánh và dịch vụ phù hợp cho bé.</p>
                 </div>
-                <a href="/home" class="btn btn-outline-secondary rounded-pill btn-sm">
+                <a href="/customer/home" class="btn btn-outline-secondary rounded-pill btn-sm">
                     <i class="fas fa-arrow-left me-1"></i>Trở về
                 </a>
             </div>
@@ -21,7 +21,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-8">
             
-            {{!-- THÔNG BÁO LỖI (Nếu có) --}}
+            {{!-- THÔNG BÁO --}}
             {{#if error}}
                 <div class="alert alert-danger alert-dismissible fade show shadow-sm mb-4" role="alert">
                     <i class="fas fa-exclamation-circle me-2"></i>{{error}}
@@ -29,7 +29,6 @@
                 </div>
             {{/if}}
 
-            {{!-- THÔNG BÁO THÀNH CÔNG (Tự tắt sau 2s) --}}
             {{#if success}}
                 <div id="successAlert" class="alert alert-success d-flex align-items-center shadow mb-4" role="alert">
                     <i class="fas fa-check-circle fa-2x me-3"></i>
@@ -72,7 +71,21 @@
                                 </div>
                             </div>
 
-                            {{!-- Khu vực hiển thị Dịch vụ (AJAX) --}}
+                            {{!-- [MỚI] Chọn Bác sĩ (Load AJAX) --}}
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Bác sĩ phụ trách (Tùy chọn)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-user-md text-muted"></i></span>
+                                    <select name="staff_username" id="doctorSelect" class="form-select border-start-0 ps-0">
+                                        <option value="">-- Chọn bác sĩ tại chi nhánh --</option>
+                                    </select>
+                                </div>
+                                <div id="loadingDoctor" class="text-muted small mt-1 d-none">
+                                    <i class="fas fa-spinner fa-spin me-1"></i>Đang tải danh sách bác sĩ...
+                                </div>
+                            </div>
+
+                            {{!-- Khu vực hiển thị Dịch vụ (Load AJAX) --}}
                             <div class="col-12">
                                 <div id="servicesContainer" class="p-3 bg-light rounded border border-dashed d-none">
                                     <label class="fw-bold mb-2 text-primary"><i class="fas fa-stethoscope me-1"></i>Dịch vụ tại chi nhánh:</label>
@@ -113,124 +126,130 @@
     </div>
 </div>
 
-{{!-- CSS TÙY CHỈNH CHO CHECKBOX DỊCH VỤ --}}
+{{!-- CSS --}}
 <style>
-    /* Ẩn checkbox mặc định */
-    .service-checkbox {
-        display: none;
-    }
-    /* Tạo giao diện thẻ cho label */
+    .service-checkbox { display: none; }
     .service-label {
-        display: block;
-        padding: 10px 15px;
-        background: white;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.2s;
+        display: block; padding: 10px 15px; background: white;
+        border: 1px solid #dee2e6; border-radius: 8px; cursor: pointer; transition: all 0.2s;
     }
-    /* Hiệu ứng khi checked */
     .service-checkbox:checked + .service-label {
-        background-color: #e7f1ff;
-        border-color: #0d6efd;
-        color: #0d6efd;
-        font-weight: bold;
+        background-color: #e7f1ff; border-color: #0d6efd; color: #0d6efd; font-weight: bold;
     }
-    .service-checkbox:checked + .service-label i {
-        color: #0d6efd;
-    }
-    .border-dashed {
-        border-style: dashed !important;
-    }
+    .service-checkbox:checked + .service-label i { color: #0d6efd; }
+    .border-dashed { border-style: dashed !important; }
 </style>
 
-{{!-- JAVASCRIPT XỬ LÝ --}}
+{{!-- JAVASCRIPT ĐÃ CẬP NHẬT --}}
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         
-        // 1. XỬ LÝ THÔNG BÁO THÀNH CÔNG (2 GIÂY TỰ TẮT)
+        // 1. XỬ LÝ THÔNG BÁO (Giữ nguyên)
         const successAlert = document.getElementById('successAlert');
         if (successAlert) {
-            // Cuộn lên đầu trang để khách thấy thông báo
             window.scrollTo({ top: 0, behavior: 'smooth' });
-
             setTimeout(() => {
-                // Hiệu ứng mờ dần
                 successAlert.style.transition = "opacity 0.5s ease";
                 successAlert.style.opacity = "0";
-                
-                setTimeout(() => {
-                    successAlert.remove(); // Xóa hẳn khỏi DOM
-                    // Tùy chọn: Chuyển hướng sang trang lịch sử sau khi tắt thông báo
-                    // window.location.href = '/customer/history'; 
-                }, 500); 
-            }, 2000); // Đợi 2000ms = 2 giây
+                setTimeout(() => successAlert.remove(), 500); 
+            }, 2000);
         }
 
-
-        // 2. XỬ LÝ LOAD DỊCH VỤ THEO CHI NHÁNH
+        // 2. KHAI BÁO BIẾN
         const branchSelect = document.getElementById('branch');
+        
+        // Biến cho Dịch vụ
         const servicesContainer = document.getElementById('servicesContainer');
         const servicesList = document.getElementById('servicesList');
         const loadingService = document.getElementById('loadingService');
         const emptyService = document.getElementById('emptyService');
+        
+        // Biến cho Bác sĩ [MỚI]
+        const doctorSelect = document.getElementById('doctorSelect');
+        const loadingDoctor = document.getElementById('loadingDoctor');
 
-        // Hiện box dịch vụ ngay khi load trang (nếu muốn) hoặc ẩn đi
+        // Init trạng thái
         servicesContainer.classList.remove('d-none');
         emptyService.classList.remove('d-none');
 
+        // 3. SỰ KIỆN CHỌN CHI NHÁNH
         branchSelect.addEventListener('change', async (e) => {
             const branchId = e.target.value;
             
-            // Reset danh sách cũ
+            // --- RESET UI ---
             servicesList.innerHTML = '';
             emptyService.classList.add('d-none');
+            
+            // Reset bác sĩ về mặc định
+            doctorSelect.innerHTML = '<option value="">-- Chọn bác sĩ --</option>';
 
             if (!branchId) {
                 emptyService.classList.remove('d-none');
                 return;
             }
 
-            // Hiện loading
+            // --- HIỆN LOADING ---
             loadingService.classList.remove('d-none');
+            loadingDoctor.classList.remove('d-none');
 
             try {
-                const res = await fetch('/customer/branch/' + branchId + '/services');
-                const data = await res.json();
-                
-                loadingService.classList.add('d-none');
+                // Gọi song song 2 API: Lấy Dịch vụ VÀ Lấy Bác sĩ
+                const [resServices, resDoctors] = await Promise.all([
+                    fetch('/customer/branch/' + branchId + '/services'),
+                    fetch('/customer/branch/' + branchId + '/doctors') // Giả định route này tồn tại
+                ]);
 
-                if (data.length === 0) {
+                // Xử lý dữ liệu
+                const servicesData = await resServices.json();
+                const doctorsData = await resDoctors.json(); // Backend trả về mảng doctors
+                
+                // --- TẮT LOADING ---
+                loadingService.classList.add('d-none');
+                loadingDoctor.classList.add('d-none');
+
+                // A. RENDER DỊCH VỤ
+                if (servicesData.length === 0) {
                     servicesList.innerHTML = '<div class="col-12 text-muted text-center">Chi nhánh này chưa có dịch vụ.</div>';
-                    return;
+                } else {
+                    servicesData.forEach(s => {
+                        const price = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(s.base_price);
+                        const html = `
+                            <div class="col-md-6">
+                                <input type="checkbox" class="service-checkbox" value="${s.service_id}" id="srv_${s.service_id}">
+                                <label class="service-label d-flex justify-content-between align-items-center shadow-sm" for="srv_${s.service_id}">
+                                    <span><i class="fas fa-medkit me-2 text-muted"></i>${s.service_name}</span>
+                                    <span class="badge bg-secondary bg-opacity-10 text-dark border">${price}</span>
+                                </label>
+                            </div>
+                        `;
+                        servicesList.innerHTML += html;
+                    });
                 }
 
-                // Render danh sách dịch vụ đẹp mắt
-                data.forEach(s => {
-                    // Format giá tiền
-                    const price = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(s.base_price);
-                    
-                    const html = `
-                        <div class="col-md-6">
-                            <input type="checkbox" class="service-checkbox" value="${s.service_id}" id="srv_${s.service_id}">
-                            <label class="service-label d-flex justify-content-between align-items-center shadow-sm" for="srv_${s.service_id}">
-                                <span><i class="fas fa-medkit me-2 text-muted"></i>${s.service_name}</span>
-                                <span class="badge bg-secondary bg-opacity-10 text-dark border">${price}</span>
-                            </label>
-                        </div>
-                    `;
-                    servicesList.innerHTML += html;
-                });
+                // B. RENDER BÁC SĨ [MỚI]
+                if (doctorsData.length === 0) {
+                     doctorSelect.innerHTML = '<option value="">-- Không có bác sĩ tại chi nhánh này --</option>';
+                } else {
+                    // Thêm option mặc định lại
+                    doctorSelect.innerHTML = '<option value="">-- Chọn bác sĩ (Ngẫu nhiên) --</option>';
+                    doctorsData.forEach(doc => {
+                        // Giả sử object bác sĩ có: username và full_name
+                        const option = document.createElement('option');
+                        option.value = doc.username;
+                        option.text = `BS. ${doc.full_name}`;
+                        doctorSelect.appendChild(option);
+                    });
+                }
 
             } catch (error) {
                 console.error(error);
                 loadingService.classList.add('d-none');
-                servicesList.innerHTML = '<div class="text-danger text-center">Lỗi tải dịch vụ. Vui lòng thử lại.</div>';
+                loadingDoctor.classList.add('d-none');
+                servicesList.innerHTML = '<div class="text-danger text-center">Lỗi kết nối server.</div>';
             }
         });
 
-
-        // 3. XỬ LÝ SUBMIT FORM
+        // 4. SUBMIT FORM
         document.querySelector('form').addEventListener('submit', () => {
             const arr = [];
             document.querySelectorAll('#servicesList input:checked').forEach(i => {

@@ -1,128 +1,146 @@
 <div class="container py-5">
-    <div class="row mb-4 align-items-center">
-        <div class="col-md-8">
-            <h2 class="fw-bold text-primary">
-                <i class="fas fa-user-md me-2"></i>Xin chào, Bác sĩ {{doctor.full_name}}! 👋
+
+    {{!-- 1. HEADER & CÔNG CỤ --}}
+    <div class="row align-items-center mb-4">
+        {{!-- Bên trái: Tiêu đề --}}
+        <div class="col-md-5">
+            <h2 class="fw-bold text-primary mb-1">
+                <i class="fas fa-clipboard-list me-2"></i>Danh sách ca khám
             </h2>
-            <p class="text-muted mb-0">Chúc bác sĩ một ngày làm việc hiệu quả. Dưới đây là tổng quan công việc hôm nay.</p>
+            <p class="text-muted mb-0">Quản lý bệnh nhân và tiến hành khám bệnh.</p>
         </div>
-        <div class="col-md-4 text-end">
-            <span class="badge bg-light text-dark border p-2">
-                <i class="far fa-calendar-alt me-1"></i> Hôm nay: <span id="currentDate" class="fw-bold"></span>
-            </span>
-        </div>
-    </div>
-
-    <div class="row g-4 mb-5">
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 border-start border-4 border-primary h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="text-muted mb-1 text-uppercase small fw-bold">Lịch hẹn hôm nay</p>
-                            <h3 class="mb-0 fw-bold text-dark">--</h3> </div>
-                        <div class="icon-circle bg-primary bg-opacity-10 text-primary p-3 rounded-circle">
-                            <i class="fas fa-calendar-check fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 border-start border-4 border-warning h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="text-muted mb-1 text-uppercase small fw-bold">Đang chờ khám</p>
-                            <h3 class="mb-0 fw-bold text-dark">--</h3>
-                        </div>
-                        <div class="icon-circle bg-warning bg-opacity-10 text-warning p-3 rounded-circle">
-                            <i class="fas fa-hourglass-half fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 border-start border-4 border-success h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="text-muted mb-1 text-uppercase small fw-bold">Đã hoàn thành</p>
-                            <h3 class="mb-0 fw-bold text-dark">--</h3>
-                        </div>
-                        <div class="icon-circle bg-success bg-opacity-10 text-success p-3 rounded-circle">
-                            <i class="fas fa-check-circle fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <h5 class="mb-3 fw-bold text-secondary border-start border-4 border-info ps-2">Chức năng quản lý</h5>
-    <div class="row g-4">
-        <div class="col-md-6 col-lg-4">
-            <a href="/doctor/appointments" class="text-decoration-none">
-                <div class="card h-100 shadow-sm hover-card border-0">
-                    <div class="card-body text-center py-5">
-                        <div class="mb-3 text-primary">
-                            <i class="fas fa-notes-medical fa-4x"></i>
-                        </div>
-                        <h4 class="card-title fw-bold text-dark">Lịch hẹn & Khám bệnh</h4>
-                        <p class="card-text text-muted">Xem danh sách bệnh nhân hôm nay và tiến hành khám.</p>
-                        <button class="btn btn-outline-primary rounded-pill px-4 mt-2">Truy cập ngay</button>
-                    </div>
-                </div>
+        
+        {{!-- Bên phải: Các nút chức năng --}}
+        <div class="col-md-7 mt-3 mt-md-0 d-flex justify-content-md-end align-items-center gap-2 flex-wrap">
+            
+            {{!-- [MỚI] Nút Tiêm phòng theo gói --}}
+            <a href="/doctor/vaccination" class="btn btn-success rounded-pill shadow-sm fw-bold text-white">
+                <i class="fas fa-syringe me-2"></i>Tiêm phòng theo gói
             </a>
-        </div>
 
-        <div class="col-md-6 col-lg-4">
-            <a href="#" class="text-decoration-none cursor-not-allowed">
-                <div class="card h-100 shadow-sm border-0 bg-light"> <div class="card-body text-center py-5 opacity-50">
-                        <div class="mb-3 text-secondary">
-                            <i class="fas fa-pills fa-4x"></i>
-                        </div>
-                        <h4 class="card-title fw-bold text-secondary">Kho thuốc</h4>
-                        <p class="card-text text-muted">Tra cứu tồn kho và danh mục thuốc (Đang phát triển).</p>
-                    </div>
+            {{!-- Form Lọc: Dùng Toggle Switch --}}
+            <form id="filterForm" class="bg-white p-2 rounded-pill shadow-sm border d-flex align-items-center px-3">
+                <div class="form-check form-switch mb-0">
+                    <input class="form-check-input cursor-pointer" type="checkbox" role="switch" 
+                           id="todayFilter" name="today" value="1" 
+                           {{#if today}}checked{{/if}} 
+                           onchange="this.form.submit()">
+                    <label class="form-check-label fw-bold small text-secondary cursor-pointer ms-2" for="todayFilter">
+                        Hiện hôm nay
+                    </label>
                 </div>
-            </a>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-            <a href="#" class="text-decoration-none"> <div class="card h-100 shadow-sm hover-card border-0">
-                    <div class="card-body text-center py-5">
-                        <div class="mb-3 text-info">
-                            <i class="fas fa-user-edit fa-4x"></i>
-                        </div>
-                        <h4 class="card-title fw-bold text-dark">Thông tin cá nhân</h4>
-                        <p class="card-text text-muted">Xem và cập nhật thông tin tài khoản bác sĩ.</p>
-                        <button class="btn btn-outline-info rounded-pill px-4 mt-2">Xem hồ sơ</button>
-                    </div>
-                </div>
+            </form>
+            
+            {{!-- Nút về trang chủ --}}
+            <a href="/doctor/home" class="btn btn-outline-secondary rounded-circle" title="Về trang chủ">
+                <i class="fas fa-home"></i>
             </a>
         </div>
     </div>
+
+    {{!-- 2. BẢNG DỮ LIỆU --}}
+    <div class="card shadow-sm border-0 overflow-hidden mb-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light text-secondary">
+                    <tr>
+                        <th scope="col" class="py-3 ps-4">Thú cưng</th>
+                        <th scope="col" class="py-3">Chủ nuôi</th>
+                        <th scope="col" class="py-3">Thời gian</th>
+                        <th scope="col" class="py-3 text-end pe-4">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#if appts.length}}
+                        {{#each appts}}
+                        <tr>
+                            {{!-- Cột Thú cưng --}}
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-info bg-opacity-10 text-info rounded-circle p-2 me-3" style="width: 40px; height: 40px; text-align: center;">
+                                        <i class="fas fa-paw"></i>
+                                    </div>
+                                    <span class="fw-bold text-dark">{{this.pet_name}}</span>
+                                </div>
+                            </td>
+
+                            {{!-- Cột Chủ nuôi --}}
+                            <td>
+                                <div class="text-muted small">
+                                    <i class="fas fa-user me-1"></i>{{this.full_name}}
+                                </div>
+                            </td>
+
+                            {{!-- Cột Thời gian --}}
+                            <td>
+                                <div class="d-flex flex-column">
+                                    <span class="fw-bold text-primary">{{this.appointment_time}}</span>
+                                    <small class="text-muted date-format" data-date="{{this.appointment_date}}">{{this.appointment_date}}</small>
+                                </div>
+                            </td>
+
+                            {{!-- Cột Hành động --}}
+                            <td class="text-end pe-4">
+                                <div class="btn-group" role="group">
+                                    {{!-- Nút Xem hồ sơ --}}
+                                    <a href="/doctor/pet/{{this.pet_id}}/history" class="btn btn-light border btn-sm text-secondary" title="Xem hồ sơ cũ">
+                                        <i class="fas fa-history"></i> Hồ sơ
+                                    </a>
+                                    
+                                    {{!-- Nút Khám (Nổi bật) --}}
+                                    <a href="/doctor/exam?appointment_id={{this.appointment_id}}&pet_id={{this.pet_id}}" class="btn btn-primary btn-sm fw-bold px-3 shadow-sm">
+                                        <i class="fas fa-stethoscope me-1"></i> KHÁM
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    {{else}}
+                        {{!-- Trạng thái trống --}}
+                        <tr>
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                <i class="fas fa-mug-hot fa-3x mb-3 opacity-50"></i>
+                                <h5>Không có lịch hẹn nào</h5>
+                                <p class="mb-0">Bạn có thể nghỉ ngơi hoặc tắt bộ lọc "Hôm nay" để xem lịch khác.</p>
+                            </td>
+                        </tr>
+                    {{/if}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {{!-- 3. NÚT ĐÓNG CA (Footer) --}}
+    <div class="text-end border-top pt-4">
+        <span class="text-muted me-2 small">Đã hoàn thành công việc?</span>
+        <a href="/doctor/close" class="btn btn-outline-danger px-4 rounded-pill hover-danger" onclick="return confirm('Bạn có chắc chắn muốn kết thúc ca làm việc?');">
+            <i class="fas fa-power-off me-2"></i>Đóng ca khám
+        </a>
+    </div>
+
 </div>
 
-{{!-- Script nhỏ để hiển thị ngày hiện tại --}}
+{{!-- SCRIPT FORMAT NGÀY THÁNG --}}
 <script>
-    const options = { weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric' };
-    document.getElementById('currentDate').innerText = new Date().toLocaleDateString('vi-VN', options);
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.date-format').forEach(el => {
+            const rawDate = el.getAttribute('data-date');
+            if (rawDate) {
+                const dateObj = new Date(rawDate);
+                if (!isNaN(dateObj.getTime())) {
+                    // Chuyển sang định dạng ngày Việt Nam (dd/mm/yyyy)
+                    el.innerText = dateObj.toLocaleDateString('vi-VN');
+                }
+            }
+        });
+    });
 </script>
 
+{{!-- CSS TÙY CHỈNH --}}
 <style>
-    /* Hiệu ứng hover cho Card */
-    .hover-card {
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .hover-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
-        border: 1px solid #0d6efd !important;
-    }
-    .cursor-not-allowed {
-        cursor: not-allowed;
+    .cursor-pointer { cursor: pointer; }
+    .hover-danger:hover {
+        background-color: #dc3545;
+        color: white;
     }
 </style>

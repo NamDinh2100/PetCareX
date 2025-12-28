@@ -1,0 +1,82 @@
+<div class="container py-5">
+
+    {{!-- 1. HEADER & QUAY VỀ --}}
+    <div class="row align-items-center mb-5">
+        <div class="col-md-6">
+            <h2 class="fw-bold text-primary mb-1">
+                <i class="fas fa-search-plus me-2"></i>Tra cứu hồ sơ
+            </h2>
+            <p class="text-muted mb-0">Tìm kiếm thông tin lịch sử khám bệnh và tiêm chủng.</p>
+        </div>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+            <a href="/customer/home" class="btn btn-outline-secondary rounded-pill hover-shadow">
+                <i class="fas fa-arrow-left me-2"></i>Về trang chủ
+            </a>
+        </div>
+    </div>
+
+    {{!-- 2. FORM TÌM KIẾM (Trung tâm) --}}
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow border-0 rounded-4 overflow-hidden">
+                <div class="card-body p-5 bg-white">
+                    
+                    <div class="text-center mb-4">
+                        <div class="d-inline-block p-3 rounded-circle bg-primary bg-opacity-10 text-primary mb-3">
+                            <i class="fas fa-id-card fa-3x"></i>
+                        </div>
+                        <h4 class="fw-bold text-dark">Nhập thông tin khách hàng</h4>
+                        <p class="text-muted small">Hệ thống hỗ trợ tìm kiếm bằng Tên đăng nhập (Username) hoặc Số CCCD.</p>
+                    </div>
+
+                    <form method="POST" action="/customer/pet-history/search">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-secondary ps-2">Từ khóa tìm kiếm</label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text bg-light border-end-0 text-muted ps-3">
+                                    <i class="fas fa-user-tag"></i>
+                                </span>
+                                <input type="text" class="form-control bg-light border-start-0" 
+                                       name="keyword" 
+                                       placeholder="VD: nguyenvan_a hoặc 079123456789" 
+                                       required autofocus>
+                                <button class="btn btn-primary px-4 fw-bold shadow-sm" type="submit">
+                                    <i class="fas fa-search me-2"></i>Tìm ngay
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    {{!-- Gợi ý hoặc Lịch sử tìm kiếm gần đây (Optional UI decoration) --}}
+                    <div class="mt-4 text-center">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Mẹo: Nhập chính xác số CCCD để có kết quả nhanh nhất.
+                        </small>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{{!-- CSS --}}
+<style>
+    .input-group-text {
+        border-color: #dee2e6;
+    }
+    .form-control:focus {
+        border-color: #dee2e6;
+        background-color: #fff;
+        box-shadow: none; /* Tắt shadow mặc định của BS */
+    }
+    .input-group:focus-within {
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        border-radius: 0.5rem;
+    }
+    .hover-shadow:hover {
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    }
+</style>
