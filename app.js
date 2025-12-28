@@ -1,13 +1,24 @@
+
+
 import express from 'express';
 import session from 'express-session';
 import { engine } from 'express-handlebars';
+
+
+
+import customerRoute from './routes/customer.route.js';
+
+
 import expressHandlebarsSections from 'express-handlebars-sections';
-import appointmentRoute from './routes/appointment.route.js';
+
 
 import accountRoute from './routes/shareRoute/account.route.js';
 
 // STAFF ROUTES
 import doctorRoute from './routes/staffRoute/doctor.route.js';
+
+
+
 import receptionistRoute from './routes/staffRoute/receptionist.route.js';
 import salerRoute from './routes/staffRoute/seler.route.js';
 import managerRoute from './routes/staffRoute/manager.route.js';
@@ -18,12 +29,11 @@ import { isAuth, isManager, isDoctor, isReceptionist, isSaler} from './middlewar
 
 const app = express();
 
+
 /* ================= BODY PARSER ================= */
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-// THÊM DÒNG NÀY: Để dùng được file css/js/img trong thư mục static (nếu có)
-app.use(express.static('static')); 
+app.use(express.static('static'));
 
 /* ================= SESSION ================= */
 app.use(
@@ -40,6 +50,7 @@ app.engine('hbs', engine({
     extname: '.hbs',
     defaultLayout: 'main', 
     helpers: {
+      
         eq(a, b) {
             return a === b;
         },
@@ -92,8 +103,11 @@ app.engine('hbs', engine({
         section: expressHandlebarsSections()
     }
 }));
-app.set('view engine', 'hbs');
-app.set('views', './views');
+
+
+
+app.set('view engine','hbs');
+app.set('views','./views');
 
 /* ================= GLOBAL VARIABLES ================= */
 app.use((req, res, next) => {
@@ -114,7 +128,5 @@ app.use('/manager', isAuth, isManager, managerRoute);
 
 // CUSTOMER ROUTE
 
-/* ================= SERVER ================= */
-app.listen(3000, () => {
-  console.log('PetCareX running at http://localhost:3000');
-});
+/* ================= START ================= */
+app.listen(3000, ()=>console.log('PetCareX running at http://localhost:3000'));

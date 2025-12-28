@@ -1,0 +1,115 @@
+<div class="container py-5">
+
+    {{!-- 1. HEADER & NÚT QUAY VỀ --}}
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="fw-bold text-primary mb-1">
+                        <i class="fas fa-user-md me-2"></i>Tạo hồ sơ bệnh án
+                    </h2>
+                    <p class="text-muted mb-0">Nhập kết quả khám lâm sàng và chẩn đoán.</p>
+                </div>
+                <a href="/doctor/home" class="btn btn-outline-secondary rounded-pill btn-sm hover-shadow">
+                    <i class="fas fa-arrow-left me-1"></i>Hủy & Quay về
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {{!-- 2. FORM NHẬP LIỆU --}}
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light border-bottom-0 pt-4 pb-0">
+                    {{!-- Nếu backend có truyền biến 'pet', hiển thị tên bé ở đây --}}
+                    {{#if pet}}
+                        <div class="alert alert-info d-flex align-items-center mb-0">
+                            <i class="fas fa-paw fa-2x me-3 opacity-50"></i>
+                            <div>
+                                <h6 class="fw-bold mb-0">Đang khám cho: {{pet.name}}</h6>
+                                <small>Giống: {{pet.species}} | Chủ: {{pet.owner_username}}</small>
+                            </div>
+                        </div>
+                    {{else}}
+                        <h5 class="fw-bold text-secondary">Thông tin khám bệnh</h5>
+                    {{/if}}
+                </div>
+
+                <div class="card-body p-4">
+                    <form method="POST" action="/doctor/exam" id="examForm">
+                        
+                        {{!-- Hidden Fields (Giữ nguyên logic của bạn) --}}
+                        <input type="hidden" name="appointment_id" value="{{appointment_id}}">
+                        <input type="hidden" name="pet_id" value="{{pet_id}}">
+
+                        {{!-- 1. Triệu chứng --}}
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-dark">
+                                <i class="fas fa-notes-medical me-2 text-warning"></i>Triệu chứng lâm sàng
+                            </label>
+                            <textarea name="symptoms" class="form-control bg-light" rows="3" 
+                                      placeholder="Mô tả các dấu hiệu: Sốt, bỏ ăn, ho, nôn mửa..." required></textarea>
+                        </div>
+
+                        {{!-- 2. Chẩn đoán --}}
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-dark">
+                                <i class="fas fa-stethoscope me-2 text-success"></i>Kết luận / Chẩn đoán
+                            </label>
+                            <textarea name="diagnosis" class="form-control bg-light" rows="3" 
+                                      placeholder="Kết luận bệnh lý cuối cùng..." required></textarea>
+                        </div>
+
+                        {{!-- 3. Ngày tái khám --}}
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-dark">
+                                <i class="far fa-calendar-alt me-2 text-primary"></i>Hẹn ngày tái khám (Nếu cần)
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="fas fa-clock"></i></span>
+                                <input type="date" name="re_exam" id="reExamInput" class="form-control">
+                            </div>
+                            <div class="form-text text-muted">Bỏ trống nếu không cần tái khám.</div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        {{!-- Nút Submit --}}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="button" onclick="history.back()" class="btn btn-light rounded-pill px-4">Hủy bỏ</button>
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 shadow fw-bold">
+                                <i class="fas fa-save me-2"></i>Lưu bệnh án
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{!-- CSS --}}
+<style>
+    textarea.form-control:focus {
+        background-color: #fff !important; /* Khi gõ thì nền trắng cho dễ đọc */
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        border-color: #86b7fe;
+    }
+    .hover-shadow:hover {
+        box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
+        background-color: #f8f9fa;
+        color: #000;
+    }
+</style>
+
+{{!-- SCRIPT --}}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Chặn chọn ngày tái khám trong quá khứ
+        const dateInput = document.getElementById('reExamInput');
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+    });
+</script>

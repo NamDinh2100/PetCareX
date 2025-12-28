@@ -1,0 +1,76 @@
+<div class="container py-5">
+
+    {{!-- 1. HEADER & QUAY VỀ --}}
+    <div class="row align-items-center mb-4">
+        <div class="col-md-6">
+            <h2 class="fw-bold text-primary mb-1">
+                <i class="fas fa-paw me-2"></i>Danh sách thú cưng
+            </h2>
+            <p class="text-muted mb-0">Kết quả tìm kiếm hồ sơ bệnh án.</p>
+        </div>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+            {{!-- Nút quay lại trang tìm kiếm --}}
+            <a href="/customer/pet-history" class="btn btn-outline-secondary rounded-pill hover-shadow">
+                <i class="fas fa-search me-2"></i>Tìm kiếm khác
+            </a>
+        </div>
+    </div>
+
+    {{!-- 2. DANH SÁCH KẾT QUẢ --}}
+    {{#if pets.length}}
+        <div class="row g-4">
+            {{#each pets}}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm hover-up">
+                    <div class="card-body d-flex align-items-center p-3">
+                        {{!-- Icon đại diện --}}
+                        <div class="flex-shrink-0 bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center" 
+                             style="width: 60px; height: 60px;">
+                            <i class="fas fa-dog fa-2x"></i>
+                        </div>
+                        
+                        {{!-- Thông tin & Nút bấm --}}
+                        <div class="ms-3 flex-grow-1">
+                            <h5 class="fw-bold mb-1 text-dark">{{this.name}}</h5>
+                            <small class="text-muted d-block mb-2">Mã Pet: #{{this.pet_id}}</small>
+                            
+                            <a href="/customer/pet-history/{{this.pet_id}}" 
+                               class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
+                                <i class="fas fa-history me-1"></i>Xem lịch sử
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    {{else}}
+        {{!-- 3. KHÔNG TÌM THẤY --}}
+        <div class="text-center py-5">
+            <div class="mb-3 opacity-25">
+                <i class="fas fa-search-minus fa-4x text-secondary"></i>
+            </div>
+            <h5 class="fw-bold text-secondary">Không tìm thấy thú cưng nào</h5>
+            <p class="text-muted">Vui lòng kiểm tra lại từ khóa hoặc thử tìm bằng thông tin khác.</p>
+            <a href="/customer/pet-history" class="btn btn-primary rounded-pill px-4 mt-2">
+                Quay lại tìm kiếm
+            </a>
+        </div>
+    {{/if}}
+
+</div>
+
+{{!-- CSS HIỆU ỨNG --}}
+<style>
+    .hover-shadow:hover {
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    }
+    .hover-up {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hover-up:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+        border: 1px solid #0dcaf0 !important; /* Viền xanh khi hover */
+    }
+</style>

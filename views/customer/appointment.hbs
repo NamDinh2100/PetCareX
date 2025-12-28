@@ -1,0 +1,261 @@
+<div class="container py-5">
+    
+    {{!-- 1. HEADER & NÚT QUAY VỀ (Giữ nguyên) --}}
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="fw-bold text-primary mb-0">
+                        <i class="fas fa-calendar-plus me-2"></i>Đặt lịch khám
+                    </h2>
+                    <p class="text-muted small mb-0">Chọn chi nhánh và dịch vụ phù hợp cho bé.</p>
+                </div>
+                <a href="/customer/home" class="btn btn-outline-secondary rounded-pill btn-sm">
+                    <i class="fas fa-arrow-left me-1"></i>Trở về
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {{!-- 2. KHUNG FORM --}}
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            
+            {{!-- THÔNG BÁO --}}
+            {{#if error}}
+                <div class="alert alert-danger alert-dismissible fade show shadow-sm mb-4" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>{{error}}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {{/if}}
+
+            {{#if success}}
+                <div id="successAlert" class="alert alert-success d-flex align-items-center shadow mb-4" role="alert">
+                    <i class="fas fa-check-circle fa-2x me-3"></i>
+                    <div>
+                        <h5 class="alert-heading fw-bold mb-0">Thành công!</h5>
+                        <p class="mb-0">{{success}}</p>
+                    </div>
+                </div>
+            {{/if}}
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <form method="POST">
+                        
+                        <div class="row g-3">
+                            {{!-- Chọn Thú cưng --}}
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Chọn Thú cưng <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-paw text-muted"></i></span>
+                                    <select name="pet_id" class="form-select border-start-0 ps-0" required>
+                                        {{#each pets}}
+                                            <option value="{{this.pet_id}}">{{this.name}} ({{this.species}})</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                            </div>
+
+                            {{!-- Chọn Chi nhánh --}}
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Chọn Chi nhánh <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-hospital-alt text-muted"></i></span>
+                                    <select id="branch" name="branch_id" class="form-select border-start-0 ps-0" required>
+                                        <option value="">-- Vui lòng chọn chi nhánh --</option>
+                                        {{#each branches}}
+                                            <option value="{{this.branch_id}}">{{this.branch_name}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                            </div>
+
+                            {{!-- [MỚI] Chọn Bác sĩ (Load AJAX) --}}
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Bác sĩ phụ trách (Tùy chọn)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-user-md text-muted"></i></span>
+                                    <select name="staff_username" id="doctorSelect" class="form-select border-start-0 ps-0">
+                                        <option value="">-- Chọn bác sĩ tại chi nhánh --</option>
+                                    </select>
+                                </div>
+                                <div id="loadingDoctor" class="text-muted small mt-1 d-none">
+                                    <i class="fas fa-spinner fa-spin me-1"></i>Đang tải danh sách bác sĩ...
+                                </div>
+                            </div>
+
+                            {{!-- Khu vực hiển thị Dịch vụ (Load AJAX) --}}
+                            <div class="col-12">
+                                <div id="servicesContainer" class="p-3 bg-light rounded border border-dashed d-none">
+                                    <label class="fw-bold mb-2 text-primary"><i class="fas fa-stethoscope me-1"></i>Dịch vụ tại chi nhánh:</label>
+                                    <div id="servicesList" class="row g-2">
+                                        {{!-- Checkbox sẽ được JS thêm vào đây --}}
+                                    </div>
+                                    <div id="loadingService" class="text-center text-muted py-2 d-none">
+                                        <div class="spinner-border spinner-border-sm me-1"></div> Đang tải dịch vụ...
+                                    </div>
+                                    <div id="emptyService" class="text-center text-muted small py-2 d-none">
+                                        (Vui lòng chọn chi nhánh để xem dịch vụ)
+                                    </div>
+                                </div>
+                                <input type="hidden" name="services" id="servicesInput">
+                            </div>
+
+                            {{!-- Ngày & Giờ --}}
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Ngày khám <span class="text-danger">*</span></label>
+                                <input type="date" name="date" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Giờ khám <span class="text-danger">*</span></label>
+                                <input type="time" name="time" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 rounded-pill fw-bold shadow-sm">
+                            <i class="fas fa-paper-plane me-2"></i>Xác nhận Đặt lịch
+                        </button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{!-- CSS --}}
+<style>
+    .service-checkbox { display: none; }
+    .service-label {
+        display: block; padding: 10px 15px; background: white;
+        border: 1px solid #dee2e6; border-radius: 8px; cursor: pointer; transition: all 0.2s;
+    }
+    .service-checkbox:checked + .service-label {
+        background-color: #e7f1ff; border-color: #0d6efd; color: #0d6efd; font-weight: bold;
+    }
+    .service-checkbox:checked + .service-label i { color: #0d6efd; }
+    .border-dashed { border-style: dashed !important; }
+</style>
+
+{{!-- JAVASCRIPT ĐÃ CẬP NHẬT --}}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        
+        // 1. XỬ LÝ THÔNG BÁO (Giữ nguyên)
+        const successAlert = document.getElementById('successAlert');
+        if (successAlert) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => {
+                successAlert.style.transition = "opacity 0.5s ease";
+                successAlert.style.opacity = "0";
+                setTimeout(() => successAlert.remove(), 500); 
+            }, 2000);
+        }
+
+        // 2. KHAI BÁO BIẾN
+        const branchSelect = document.getElementById('branch');
+        
+        // Biến cho Dịch vụ
+        const servicesContainer = document.getElementById('servicesContainer');
+        const servicesList = document.getElementById('servicesList');
+        const loadingService = document.getElementById('loadingService');
+        const emptyService = document.getElementById('emptyService');
+        
+        // Biến cho Bác sĩ [MỚI]
+        const doctorSelect = document.getElementById('doctorSelect');
+        const loadingDoctor = document.getElementById('loadingDoctor');
+
+        // Init trạng thái
+        servicesContainer.classList.remove('d-none');
+        emptyService.classList.remove('d-none');
+
+        // 3. SỰ KIỆN CHỌN CHI NHÁNH
+        branchSelect.addEventListener('change', async (e) => {
+            const branchId = e.target.value;
+            
+            // --- RESET UI ---
+            servicesList.innerHTML = '';
+            emptyService.classList.add('d-none');
+            
+            // Reset bác sĩ về mặc định
+            doctorSelect.innerHTML = '<option value="">-- Chọn bác sĩ --</option>';
+
+            if (!branchId) {
+                emptyService.classList.remove('d-none');
+                return;
+            }
+
+            // --- HIỆN LOADING ---
+            loadingService.classList.remove('d-none');
+            loadingDoctor.classList.remove('d-none');
+
+            try {
+                // Gọi song song 2 API: Lấy Dịch vụ VÀ Lấy Bác sĩ
+                const [resServices, resDoctors] = await Promise.all([
+                    fetch('/customer/branch/' + branchId + '/services'),
+                    fetch('/customer/branch/' + branchId + '/doctors') // Giả định route này tồn tại
+                ]);
+
+                // Xử lý dữ liệu
+                const servicesData = await resServices.json();
+                const doctorsData = await resDoctors.json(); // Backend trả về mảng doctors
+                
+                // --- TẮT LOADING ---
+                loadingService.classList.add('d-none');
+                loadingDoctor.classList.add('d-none');
+
+                // A. RENDER DỊCH VỤ
+                if (servicesData.length === 0) {
+                    servicesList.innerHTML = '<div class="col-12 text-muted text-center">Chi nhánh này chưa có dịch vụ.</div>';
+                } else {
+                    servicesData.forEach(s => {
+                        const price = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(s.base_price);
+                        const html = `
+                            <div class="col-md-6">
+                                <input type="checkbox" class="service-checkbox" value="${s.service_id}" id="srv_${s.service_id}">
+                                <label class="service-label d-flex justify-content-between align-items-center shadow-sm" for="srv_${s.service_id}">
+                                    <span><i class="fas fa-medkit me-2 text-muted"></i>${s.service_name}</span>
+                                    <span class="badge bg-secondary bg-opacity-10 text-dark border">${price}</span>
+                                </label>
+                            </div>
+                        `;
+                        servicesList.innerHTML += html;
+                    });
+                }
+
+                // B. RENDER BÁC SĨ [MỚI]
+                if (doctorsData.length === 0) {
+                     doctorSelect.innerHTML = '<option value="">-- Không có bác sĩ tại chi nhánh này --</option>';
+                } else {
+                    // Thêm option mặc định lại
+                    doctorSelect.innerHTML = '<option value="">-- Chọn bác sĩ (Ngẫu nhiên) --</option>';
+                    doctorsData.forEach(doc => {
+                        // Giả sử object bác sĩ có: username và full_name
+                        const option = document.createElement('option');
+                        option.value = doc.username;
+                        option.text = `BS. ${doc.full_name}`;
+                        doctorSelect.appendChild(option);
+                    });
+                }
+
+            } catch (error) {
+                console.error(error);
+                loadingService.classList.add('d-none');
+                loadingDoctor.classList.add('d-none');
+                servicesList.innerHTML = '<div class="text-danger text-center">Lỗi kết nối server.</div>';
+            }
+        });
+
+        // 4. SUBMIT FORM
+        document.querySelector('form').addEventListener('submit', () => {
+            const arr = [];
+            document.querySelectorAll('#servicesList input:checked').forEach(i => {
+                arr.push({ service_id: i.value });
+            });
+            document.getElementById('servicesInput').value = JSON.stringify(arr);
+        });
+    });
+</script>

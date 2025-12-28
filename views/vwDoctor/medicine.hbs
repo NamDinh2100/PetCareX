@@ -1,0 +1,119 @@
+<div class="container py-5">
+
+    {{!-- 1. HEADER & QUAY VỀ --}}
+    <div class="row align-items-center mb-4">
+        <div class="col-md-6">
+            <h2 class="fw-bold text-primary mb-1">
+                <i class="fas fa-pills me-2"></i>Kho dược phẩm
+            </h2>
+            <p class="text-muted mb-0">Tra cứu thông tin và số lượng tồn kho thuốc.</p>
+        </div>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+            <a href="/doctor/home" class="btn btn-outline-secondary rounded-pill hover-shadow">
+                <i class="fas fa-arrow-left me-2"></i>Về trang chính
+            </a>
+        </div>
+    </div>
+
+    {{!-- 2. THANH TÌM KIẾM --}}
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-8">
+            <form action="" method="GET">
+                <div class="input-group shadow-sm rounded-pill overflow-hidden border">
+                    <span class="input-group-text bg-white border-0 ps-4"><i class="fas fa-search text-muted"></i></span>
+                    <input type="text" class="form-control border-0 py-3" 
+                           name="keyword" placeholder="Nhập tên thuốc, hoạt chất..." 
+                           value="{{keyword}}">
+                    <button class="btn btn-primary px-5 fw-bold" type="submit">Tìm kiếm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{!-- 3. BẢNG KẾT QUẢ --}}
+    <div class="card shadow-sm border-0 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light text-secondary">
+                    <tr>
+                        <th scope="col" class="py-3 ps-4" style="width: 50%;">Tên thuốc & Hoạt chất</th>
+                        <th scope="col" class="py-3 text-center">Đơn vị tính</th>
+                        <th scope="col" class="py-3 text-center pe-4">Tồn kho thực tế</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#if list.length}}
+                        {{#each list}}
+                        <tr>
+                            {{!-- Tên thuốc --}}
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-success bg-opacity-10 text-success rounded p-2 me-3">
+                                        <i class="fas fa-prescription-bottle-alt fa-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold text-dark mb-0">{{this.medicine_name}}</h6>
+                                        {{!-- Nếu có mô tả hoặc thành phần thì hiện ở đây --}}
+                                        {{#if this.description}}
+                                            <small class="text-muted">{{this.description}}</small>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                            </td>
+
+                            {{!-- Đơn vị --}}
+                            <td class="text-center">
+                                <span class="badge bg-light text-dark border">
+                                    {{this.unit}}
+                                </span>
+                            </td>
+
+                            {{!-- Tồn kho (Logic màu sắc) --}}
+                            <td class="text-center pe-4">
+                                {{#if this.stock_quantity}}
+                                    {{!-- Logic Handlebars đơn giản: Có hàng thì màu xanh/đậm --}}
+                                    <span class="fw-bold text-dark h5 mb-0 stock-value" data-val="{{this.stock_quantity}}">
+                                        {{this.stock_quantity}}
+                                    </span>
+                                {{else}}
+                                    <span class="badge bg-danger">Hết hàng</span>
+                                {{/if}}
+                            </td>
+                        </tr>
+                        {{/each}}
+                    {{else}}
+                        <tr>
+                            <td colspan="3" class="text-center py-5 text-muted">
+                                <i class="fas fa-search-minus fa-3x mb-3 opacity-50"></i>
+                                <h5>Không tìm thấy thuốc nào</h5>
+                                <p class="mb-0">Thử tìm kiếm bằng từ khóa khác.</p>
+                            </td>
+                        </tr>
+                    {{/if}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{{!-- SCRIPT TÔ MÀU SỐ LƯỢNG --}}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Tô màu đỏ nếu tồn kho < 10, màu xanh nếu nhiều
+        document.querySelectorAll('.stock-value').forEach(el => {
+            const val = parseInt(el.getAttribute('data-val'));
+            if (val < 10) {
+                el.classList.add('text-danger'); // Sắp hết -> Đỏ
+                el.innerHTML += ' <i class="fas fa-exclamation-circle small text-danger ms-1" title="Sắp hết hàng"></i>';
+            } else {
+                el.classList.add('text-success'); // Còn nhiều -> Xanh
+            }
+        });
+    });
+</script>
+
+<style>
+    .hover-shadow:hover {
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    }
+</style>

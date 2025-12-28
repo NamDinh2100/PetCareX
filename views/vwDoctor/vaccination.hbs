@@ -1,0 +1,216 @@
+<div class="container py-5">
+
+    {{!-- 1. HEADER & QUAY VỀ --}}
+    <div class="row align-items-center mb-4">
+        <div class="col-md-6">
+            <h2 class="fw-bold text-success mb-1">
+                <i class="fas fa-syringe me-2"></i>Tiêm phòng theo gói
+            </h2>
+            <p class="text-muted mb-0">Quản lý lộ trình vaccine định kỳ cho thú cưng.</p>
+        </div>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+            <a href="/doctor/home" class="btn btn-outline-secondary rounded-pill hover-shadow">
+                <i class="fas fa-arrow-left me-2"></i>Về trang chủ
+            </a>
+        </div>
+    </div>
+
+    {{!-- 2. FORM TÌM KIẾM (Card tìm kiếm) --}}
+    <div class="card shadow-sm border-0 mb-5">
+        <div class="card-body p-4 bg-light rounded-3">
+            <form method="GET" action="/doctor/vaccination" class="row g-3 align-items-end">
+                <div class="col-md-9">
+                    <label class="form-label fw-bold text-dark">
+                        <i class="fas fa-search me-1"></i>Chọn thú cưng:
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="fas fa-paw text-muted"></i></span>
+                        {{!-- Helper: Khi chọn xong tự submit luôn cho tiện --}}
+                        <select name="pet_id" class="form-select border-start-0" onchange="this.form.submit()">
+                            <option value="">-- Chọn thú cưng trong danh sách --</option>
+                            {{#each pets}}
+                                <option value="{{this.pet_id}}" {{#if (eq ../pet_id this.pet_id)}}selected{{/if}}>
+                                    {{this.name}} - Chủ: {{this.owner_name}} ({{this.phone_number}})
+                                </option>
+                            {{/each}}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-success w-100 fw-bold shadow-sm">
+                        <i class="fas fa-filter me-2"></i>Xem hồ sơ
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{!-- 3. NỘI DUNG CHÍNH (Chỉ hiện khi đã chọn pet) --}}
+    {{#if pet_id}}
+    <div class="row g-4">
+        
+        {{!-- CỘT TRÁI: HỒ SƠ THÚ CƯNG (Đã cập nhật full thông tin) --}}
+        <div class="col-lg-4">
+            {{#if petProfile}}
+            <div class="card shadow-sm border-0 h-100 border-top border-4 border-success">
+                <div class="card-header bg-white border-bottom-0 pt-4 text-center">
+                    <div class="d-inline-block p-3 rounded-circle bg-success bg-opacity-10 text-success mb-2">
+                        <i class="fas fa-dog fa-3x"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-0">{{petProfile.pet_name}}</h4>
+                    <span class="badge bg-secondary bg-opacity-10 text-dark border mt-2">{{petProfile.species}}</span>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {{!-- Giới tính --}}
+                        <li class="list-group-item border-0 px-0 d-flex justify-content-between">
+                            <span class="text-muted"><i class="fas fa-venus-mars me-2 width-25"></i>Giới tính:</span>
+                            <span class="fw-bold">{{petProfile.sex}}</span>
+                        </li>
+                        {{!-- Ngày sinh --}}
+                        <li class="list-group-item border-0 px-0 d-flex justify-content-between">
+                            <span class="text-muted"><i class="fas fa-birthday-cake me-2 width-25"></i>Ngày sinh:</span>
+                            <span class="fw-bold date-format" data-date="{{petProfile.day_born}}">{{petProfile.day_born}}</span>
+                        </li>
+                        {{!-- Cân nặng --}}
+                        <li class="list-group-item border-0 px-0 d-flex justify-content-between">
+                            <span class="text-muted"><i class="fas fa-weight me-2 width-25"></i>Cân nặng:</span>
+                            <span class="fw-bold text-danger">{{petProfile.weight}} kg</span>
+                        </li>
+                        {{!-- Tình trạng sức khỏe --}}
+                        <li class="list-group-item border-0 px-0 d-flex justify-content-between align-items-center">
+                            <span class="text-muted"><i class="fas fa-heartbeat me-2 width-25"></i>Tình trạng:</span>
+                            <span class="badge bg-info text-dark">{{petProfile.health_status}}</span>
+                        </li>
+                    </ul>
+                    
+                    <hr class="my-3">
+                    
+                    {{!-- Thông tin chủ nuôi --}}
+                    <h6 class="fw-bold text-primary mb-3"><i class="fas fa-user-tag me-2"></i>Chủ nuôi</h6>
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="bg-light rounded p-2 me-3 text-primary">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Họ tên</small>
+                            <strong>{{petProfile.owner_name}}</strong>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="bg-light rounded p-2 me-3 text-success">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Liên hệ</small>
+                            <strong>{{petProfile.owner_phone}}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{/if}}
+        </div>
+
+        {{!-- CỘT PHẢI: DANH SÁCH GÓI TIÊM --}}
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white border-bottom-0 pt-4 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold text-dark ps-2">
+                        <i class="fas fa-box-open me-2 text-success"></i>Gói tiêm đã đăng ký
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {{#if packages.length}}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-light text-secondary">
+                                    <tr>
+                                        <th scope="col" class="py-3 ps-3">Tên gói vaccine</th>
+                                        <th scope="col" class="py-3 text-center">Trạng thái</th>
+                                        <th scope="col" class="py-3 text-end pe-3">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each packages}}
+                                    <tr>
+                                        <td class="ps-3">
+                                            <div class="fw-bold text-dark">{{this.package_name}}</div>
+                                            <small class="text-muted">ID Gói: #{{this.package_id}}</small>
+                                        </td>
+                                        
+                                        {{!-- Trạng thái (Tự động tô màu bằng JS) --}}
+                                        <td class="text-center">
+                                            <span class="status-badge badge rounded-pill px-3" data-status="{{this.status}}">
+                                                {{this.status}}
+                                            </span>
+                                        </td>
+                                        
+                                        <td class="text-end pe-3">
+                                            <a href="/doctor/vaccination/package/{{this.package_id}}?pet_id={{../pet_id}}" 
+                                               class="btn btn-outline-primary btn-sm rounded-pill fw-bold hover-shadow px-3">
+                                                Xem mũi đến hạn <i class="fas fa-chevron-right ms-1"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                    {{else}}
+                        {{!-- Nếu chưa có gói --}}
+                        <div class="text-center py-5">
+                            <div class="mb-3 text-muted opacity-25">
+                                <i class="fas fa-box-open fa-4x"></i>
+                            </div>
+                            <h5 class="text-muted">Chưa có gói tiêm nào</h5>
+                            <p class="text-muted small">Thú cưng này chưa đăng ký lộ trình tiêm chủng.</p>
+                        </div>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/if}}
+
+</div>
+
+{{!-- SCRIPT & STYLE --}}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // 1. Format Ngày tháng
+        document.querySelectorAll('.date-format').forEach(el => {
+            const rawDate = el.getAttribute('data-date') || el.innerText;
+            if (rawDate) {
+                const dateObj = new Date(rawDate);
+                if (!isNaN(dateObj.getTime())) {
+                    el.innerText = dateObj.toLocaleDateString('vi-VN');
+                }
+            }
+        });
+
+        // 2. Tô màu trạng thái (Active / Expired / Completed)
+        document.querySelectorAll('.status-badge').forEach(el => {
+            const status = el.getAttribute('data-status').toLowerCase();
+            el.className = 'status-badge badge rounded-pill px-3'; // Reset
+
+            if (status === 'active' || status === 'kích hoạt' || status === 'đang chạy') {
+                el.classList.add('bg-success'); // Xanh lá
+            } else if (status === 'expired' || status === 'hết hạn') {
+                el.classList.add('bg-secondary'); // Xám
+            } else if (status === 'completed' || status === 'hoàn thành') {
+                el.classList.add('bg-primary'); // Xanh dương
+            } else {
+                el.classList.add('bg-warning', 'text-dark'); // Vàng (Pending)
+            }
+        });
+    });
+</script>
+
+<style>
+    .width-25 { width: 25px; text-align: center; }
+    .hover-shadow:hover {
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+        transform: translateY(-2px);
+        transition: all 0.2s;
+    }
+</style>

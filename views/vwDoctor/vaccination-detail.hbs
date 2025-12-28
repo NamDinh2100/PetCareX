@@ -1,0 +1,151 @@
+<div class="container py-5">
+
+    {{!-- 1. HEADER & QUAY VỀ --}}
+    <div class="row align-items-center mb-4">
+        <div class="col-md-7">
+            <h2 class="fw-bold text-primary mb-1">
+                <i class="fas fa-syringe me-2"></i>Chi tiết mũi tiêm
+            </h2>
+            <p class="text-muted mb-0">Thực hiện tiêm chủng theo lộ trình gói vaccine.</p>
+        </div>
+        <div class="col-md-5 text-md-end mt-3 mt-md-0">
+            <a href="/doctor/vaccination?pet_id={{pet_id}}" class="btn btn-outline-secondary rounded-pill hover-shadow">
+                <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
+            </a>
+        </div>
+    </div>
+
+    {{!-- 2. THÔNG BÁO LỖI (Nếu có) --}}
+    {{#if error}}
+        <div class="alert alert-danger d-flex align-items-center mb-4 shadow-sm" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <div>{{error}}</div>
+        </div>
+    {{/if}}
+
+    {{!-- 3. THÔNG TIN GÓI (Card thông tin) --}}
+    <div class="card shadow-sm border-0 mb-4 bg-light">
+        <div class="card-body d-flex align-items-center justify-content-between flex-wrap">
+            <div>
+                <span class="text-muted small text-uppercase fw-bold">Thú cưng (ID)</span>
+                <h5 class="fw-bold text-dark mb-0">#{{pet_id}}</h5>
+            </div>
+            <div class="d-none d-md-block border-start mx-3" style="height: 40px;"></div>
+            <div>
+                <span class="text-muted small text-uppercase fw-bold">Gói Vaccine (ID)</span>
+                <h5 class="fw-bold text-success mb-0">#{{package_id}}</h5>
+            </div>
+            {{!-- Nếu backend bạn truyền được tên gói/tên pet thì thay vào chỗ ID nhé --}}
+            <div class="ms-auto mt-3 mt-md-0">
+                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary px-3 py-2 rounded-pill">
+                    <i class="fas fa-notes-medical me-1"></i> Đang thực hiện
+                </span>
+            </div>
+        </div>
+    </div>
+
+    {{!-- 4. DANH SÁCH MŨI TIÊM CẦN THỰC HIỆN --}}
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white border-bottom-0 pt-4">
+            <h5 class="fw-bold text-dark border-start border-4 border-info ps-3">
+                <i class="fas fa-list-ol me-2 text-info"></i>Các mũi chưa tiêm
+            </h5>
+        </div>
+        <div class="card-body">
+            {{#if dueVaccines.length}}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-secondary">
+                            <tr>
+                                <th scope="col" class="py-3 ps-4" style="width: 10%;">Mũi số</th>
+                                <th scope="col" class="py-3" style="width: 30%;">Tên Vaccine</th>
+                                <th scope="col" class="py-3 text-center">Thao tác tiêm chủng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each dueVaccines}}
+                            <tr>
+                                {{!-- Mũi số --}}
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center justify-content-center bg-secondary bg-opacity-10 rounded-circle fw-bold text-dark" 
+                                         style="width: 35px; height: 35px;">
+                                        {{this.dose_order}}
+                                    </div>
+                                </td>
+
+                                {{!-- Tên Vaccine --}}
+                                <td>
+                                    <div class="fw-bold text-dark">{{this.vaccine_name}}</div>
+                                    <small class="text-muted">ID: {{this.vaccine_id}}</small>
+                                </td>
+
+                                {{!-- Form Thao tác --}}
+                                <td>
+                                    <form method="POST" action="/doctor/vaccination/confirm" class="row g-2 align-items-center justify-content-end">
+                                        <input type="hidden" name="pet_id" value="{{../pet_id}}" />
+                                        <input type="hidden" name="package_id" value="{{../package_id}}" />
+                                        <input type="hidden" name="vaccine_id" value="{{this.vaccine_id}}" />
+
+                                        {{!-- Nhập liều lượng --}}
+                                        <div class="col-auto">
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text bg-light"><i class="fas fa-flask"></i></span>
+                                                <input type="text" name="dosage" class="form-control" placeholder="VD: 1ml" style="width: 100px;">
+                                            </div>
+                                        </div>
+
+                                        {{!-- Chọn ngày (Auto today) --}}
+                                        <div class="col-auto">
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text bg-light"><i class="far fa-calendar-alt"></i></span>
+                                                <input type="date" name="vaccination_date" class="form-control date-today" required>
+                                            </div>
+                                        </div>
+
+                                        {{!-- Nút xác nhận --}}
+                                        <div class="col-auto">
+                                            <button type="submit" class="btn btn-success btn-sm fw-bold shadow-sm px-3" onclick="return confirm('Xác nhận đã tiêm mũi {{this.vaccine_name}}?');">
+                                                <i class="fas fa-check me-1"></i>Xác nhận
+                                            </button>
+                                        </div>
+                                    </form>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            {{else}}
+                {{!-- TRẠNG THÁI TRỐNG --}}
+                <div class="text-center py-5">
+                    <div class="mb-3 text-muted opacity-25">
+                        <i class="fas fa-check-circle fa-4x"></i>
+                    </div>
+                    <h5 class="text-success fw-bold">Hoàn tất!</h5>
+                    <p class="text-muted">Không còn mũi vaccine nào cần tiêm trong gói này.</p>
+                </div>
+            {{/if}}
+        </div>
+    </div>
+</div>
+
+{{!-- SCRIPT TỰ ĐỘNG ĐIỀN NGÀY HÔM NAY --}}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Lấy ngày hôm nay định dạng YYYY-MM-DD
+        const today = new Date().toISOString().split('T')[0];
+        
+        // Tìm tất cả các ô input có class 'date-today' và gán giá trị
+        document.querySelectorAll('.date-today').forEach(input => {
+            if (!input.value) {
+                input.value = today;
+            }
+        });
+    });
+</script>
+
+<style>
+    .hover-shadow:hover {
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    }
+</style>
