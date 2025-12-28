@@ -1,0 +1,216 @@
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/doctor/appointments">Lịch hẹn</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Khám bệnh</li>
+            </ol>
+        </nav>
+        <h2 class="text-primary fw-bold mb-0">
+            <i class="fas fa-paw me-2"></i>{{appt.pet_name}}
+        </h2>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4">
+            
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="fas fa-box-open me-2"></i>Gói tiêm chủng</h6>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {{#each packages}}
+                            <li class="list-group-item">
+                                <div class="d-flex justify-content-between">
+                                    <span class="badge {{#if (eq status 'Active')}}bg-success{{else}}bg-secondary{{/if}}">{{status}}</span>
+                                    <small class="text-muted">{{duration_months}} tháng</small>
+                                </div>
+                                <div class="small mt-1">
+                                    Giảm giá: <b class="text-danger">{{discount_percentage}}%</b> | Tổng: {{total_price}}
+                                </div>
+                            </li>
+                        {{else}}
+                            <li class="list-group-item text-center text-muted fst-italic py-3">Chưa đăng ký gói nào</li>
+                        {{/each}}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="accordion shadow-sm" id="historyAccordion">
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingHistory">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHistory" aria-expanded="true">
+                            <i class="fas fa-history me-2 text-primary"></i> Tiền sử khám bệnh
+                        </button>
+                    </h2>
+                    <div id="collapseHistory" class="accordion-collapse collapse show" data-bs-parent="#historyAccordion">
+                        <div class="accordion-body p-0" style="max-height: 300px; overflow-y: auto;">
+                            <ul class="list-group list-group-flush">
+                                {{#each history}}
+                                    <li class="list-group-item">
+                                        <small class="text-muted fw-bold">{{examination_date}}</small>
+                                        <p class="mb-0 text-dark">{{diagnosis}}</p>
+                                    </li>
+                                {{else}}
+                                    <div class="p-3 text-center text-muted">Chưa có tiền sử khám.</div>
+                                {{/each}}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingVaccine">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVaccine">
+                            <i class="fas fa-syringe me-2 text-success"></i> Lịch sử tiêm phòng
+                        </button>
+                    </h2>
+                    <div id="collapseVaccine" class="accordion-collapse collapse" data-bs-parent="#historyAccordion">
+                        <div class="accordion-body p-0">
+                            <table class="table table-sm table-striped mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Ngày</th>
+                                        <th>Vắc-xin</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each vaccinations}}
+                                        <tr>
+                                            <td><small>{{vaccination_date}}</small></td>
+                                            <td>
+                                                <span class="d-block fw-bold">{{vaccine_name}}</span>
+                                                <small class="text-muted">({{vaccine_type}})</small>
+                                            </td>
+                                        </tr>
+                                    {{else}}
+                                        <tr><td colspan="2" class="text-center text-muted py-3">Chưa có dữ liệu tiêm.</td></tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <form method="POST" id="examForm" action="/doctor/examine/{{appt.appointment_id}}"> <input type="hidden" name="petId" value="{{appt.pet_id}}">
+
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="card-title mb-0 text-primary fw-bold">Kết quả lâm sàng</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Triệu chứng & Biểu hiện</label>
+                            <textarea name="symptoms" class="form-control" rows="3" placeholder="Mô tả chi tiết triệu chứng..." required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Chẩn đoán / Kết luận</label>
+                            <textarea name="diagnosis" class="form-control" rows="3" placeholder="Kết luận bệnh lý..." required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Ngày tái khám</label>
+                                <div class="input-group">
+                                    <input type="date" name="reExamDate" id="reExamDate" class="form-control">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="document.getElementById('reExamDate').value = ''">
+                                        <i class="fas fa-times"></i> Xóa
+                                    </button>
+                                </div>
+                                <div class="form-text">Để trống nếu không cần tái khám.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-pills me-2"></i>Đơn thuốc</h5>
+                        <button type="button" class="btn btn-light btn-sm text-success fw-bold" onclick="addMedicineRow()">
+                            <i class="fas fa-plus-circle"></i> Thêm thuốc
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 40%">Tên thuốc</th>
+                                    <th style="width: 15%">Số lượng</th>
+                                    <th style="width: 35%">Liều dùng</th>
+                                    <th style="width: 10%"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="medicineTableBody">
+                                </tbody>
+                        </table>
+                        <div id="emptyMedicineMsg" class="text-center p-4 text-muted">
+                            Chưa có thuốc nào được kê. Nhấn "Thêm thuốc" để bắt đầu.
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white text-end py-3">
+                        <a href="/doctor/appointments" class="btn btn-secondary me-2">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-primary px-4 fw-bold">
+                            <i class="fas fa-save me-2"></i> Lưu hồ sơ khám
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{!-- SCRIPT XỬ LÝ KÊ ĐƠN THUỐC --}}
+<script>
+    // Chuẩn bị danh sách thuốc từ Server render ra để JS sử dụng
+    const medicineOptions = `
+        <option value="">-- Chọn thuốc --</option>
+        {{#each medicines}}
+            <option value="{{this.medicine_id}}">{{this.medicine_name}} ({{this.unit}})</option>
+        {{/each}}
+    `;
+
+    function addMedicineRow() {
+        const tbody = document.getElementById('medicineTableBody');
+        const emptyMsg = document.getElementById('emptyMedicineMsg');
+        
+        // Ẩn thông báo trống
+        if(emptyMsg) emptyMsg.style.display = 'none';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>
+                <select name="medicineIds[]" class="form-select" required>
+                    ${medicineOptions}
+                </select>
+            </td>
+            <td>
+                <input type="number" name="quantities[]" class="form-control" placeholder="SL" min="1" value="1" required>
+            </td>
+            <td>
+                <input type="text" name="dosages[]" class="form-control" placeholder="Sáng 1, Chiều 1...">
+            </td>
+            <td class="text-center">
+                <button type="button" class="btn btn-outline-danger btn-sm border-0" onclick="removeRow(this)">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    }
+
+    function removeRow(btn) {
+        const row = btn.closest('tr');
+        row.remove();
+        
+        // Nếu xóa hết thì hiện lại thông báo
+        const tbody = document.getElementById('medicineTableBody');
+        if (tbody.children.length === 0) {
+            document.getElementById('emptyMedicineMsg').style.display = 'block';
+        }
+    }
+</script>

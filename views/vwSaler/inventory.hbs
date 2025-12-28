@@ -1,0 +1,153 @@
+<div class="py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Quản lý tồn kho</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/saler">Tổng quan</a></li>
+                    <li class="breadcrumb-item active">Tồn kho</li>
+                </ol>
+            </nav>
+        </div>
+        <button class="btn btn-primary">
+            <i class="bi bi-arrow-down-circle me-2"></i>Nhập kho
+        </button>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card card-modern">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <div class="text-xs fw-bold text-muted text-uppercase mb-1">Tổng giá trị kho</div>
+                            <div class="h5 mb-0 fw-bold text-primary">0đ</div>
+                        </div>
+                        <div class="text-primary">
+                            <i class="bi bi-wallet2 fs-2"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-modern">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <div class="text-xs fw-bold text-muted text-uppercase mb-1">Sản phẩm trong kho</div>
+                            <div class="h5 mb-0 fw-bold text-success">{{products.length}}</div>
+                        </div>
+                        <div class="text-success">
+                            <i class="bi bi-boxes fs-2"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-modern">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <div class="text-xs fw-bold text-muted text-uppercase mb-1">Cần nhập thêm</div>
+                            <div class="h5 mb-0 fw-bold text-warning">0</div>
+                        </div>
+                        <div class="text-warning">
+                            <i class="bi bi-exclamation-triangle fs-2"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory Table -->
+    <div class="card card-modern">
+        <div class="card-header bg-white py-3">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text" class="form-control bg-light border-start-0"
+                            placeholder="Tìm kiếm sản phẩm...">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select bg-light">
+                        <option selected>Tất cả loại</option>
+                        <option>Food</option>
+                        <option>Accessory</option>
+                        <option>Medicine</option>
+                        <option>Toy</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select bg-light">
+                        <option selected>Tình trạng kho</option>
+                        <option>Còn hàng</option>
+                        <option>Sắp hết</option>
+                        <option>Hết hàng</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-modern mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Sản phẩm</th>
+                            <th>Loại</th>
+                            <th>Giá vốn</th>
+                            <th>Giá bán</th>
+                            <th>Tồn kho</th>
+                            <th>Giá trị</th>
+                            <th>Trạng thái</th>
+                            <th class="text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#if products}}
+                        {{#each products}}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold">{{this.product_name}}</div>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark">{{this.product_type}}</span>
+                            </td>
+                            <td>-</td>
+                            <td>
+                                <span class="fw-bold text-success">{{this.selling_price}}đ</span>
+                            </td>
+                            <td>
+                                <span class="fw-bold">{{this.stock_quantity}}</span>
+                            </td>
+                            <td>-</td>
+                            
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-outline-primary" title="Nhập kho">
+                                    <i class="bi bi-plus-circle"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {{/each}}
+                        {{else}}
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                                <p class="mb-0">Chưa có sản phẩm nào trong kho</p>
+                            </td>
+                        </tr>
+                        {{/if}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

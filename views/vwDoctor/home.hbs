@@ -1,3 +1,20 @@
+{{#section 'css'}}
+<style>
+    /* Hiệu ứng hover cho Card */
+    .hover-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+        border: 1px solid #0d6efd !important;
+    }
+    .cursor-not-allowed {
+        cursor: not-allowed;
+    }
+</style>
+{{/section}}    
+
 <div class="container py-5">
 
     {{!-- 1. HEADER & CÔNG CỤ --}}
@@ -120,7 +137,12 @@
 
 </div>
 
+<<<<<<< HEAD:views/doctor/home.hbs
 {{!-- SCRIPT FORMAT NGÀY THÁNG --}}
+=======
+{{#section 'js'}}
+{{!-- Script nhỏ để hiển thị ngày hiện tại --}}
+>>>>>>> 8d86019457e41b25330bab30d7dbc6d2bc84f6fa:views/vwDoctor/home.hbs
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         document.querySelectorAll('.date-format').forEach(el => {
@@ -136,6 +158,7 @@
     });
 </script>
 
+<<<<<<< HEAD:views/doctor/home.hbs
 {{!-- CSS TÙY CHỈNH --}}
 <style>
     .cursor-pointer { cursor: pointer; }
@@ -144,3 +167,6 @@
         color: white;
     }
 </style>
+=======
+{{/section}}
+>>>>>>> 8d86019457e41b25330bab30d7dbc6d2bc84f6fa:views/vwDoctor/home.hbs

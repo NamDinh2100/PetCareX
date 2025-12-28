@@ -1,9 +1,9 @@
 import express from 'express';
 
-import * as doctorApptModel from '../models/doctor/appointment.model.js';
-import * as examModel from '../models/doctor/exam.model.js';
-import * as prescriptionModel from '../models/doctor/prescription.model.js';
-import * as medicineModel from '../models/doctor/medicine.model.js';
+import * as doctorApptModel from '../../models/doctor/appointment.model.js';
+import * as examModel from '../../models/doctor/exam.model.js';
+import * as prescriptionModel from '../../models/doctor/prescription.model.js';
+import * as medicineModel from '../../models/doctor/medicine.model.js';
 
 //port * as vaccModel from '../models/doctor/vaccination.model.js';
 
@@ -74,7 +74,7 @@ router.post('/doctor/exam/:exam_id/prescribe', async (req, res) => {
 });
 
 // /* ================== TIÊM PHÒNG ================== */
-import * as vaccModel from '../models/doctor/vaccination.model.js';
+import * as vaccModel from '../../models/doctor/vaccination.model.js';
 
 // 1) Trang chọn thú cưng để tiêm theo gói
 router.get('/doctor/vaccination', async (req, res) => {
