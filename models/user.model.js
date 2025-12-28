@@ -45,3 +45,9 @@ export function findStaffByUserName(username) {
         .where('username', username)
         .first();
 }
+
+export function findCustomerByUsername(username) {
+    return db('customer')
+        .where('username', username)
+        .first();
+}
