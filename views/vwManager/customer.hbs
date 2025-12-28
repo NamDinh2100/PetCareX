@@ -1,0 +1,214 @@
+<div class="d-sm-flex align-items-center justify-content-between mb-4 pt-3">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Khách hàng</li>
+            </ol>
+        </nav>
+        <h1 class="h3 mb-0 text-gray-800 fw-bold">Quản lý khách hàng</h1>
+    </div>
+    <div>
+        <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+            <i class="bi bi-person-plus-fill me-2"></i>Thêm khách hàng mới
+        </button>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card card-modern border-0 border-start border-primary border-4 shadow-sm py-2">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-xs fw-bold text-primary text-uppercase mb-1">Tổng khách hàng</div>
+                        <div class="h4 mb-0 fw-bold text-dark">{{total}}</div>
+                    </div>
+                    <i class="bi bi-people-fill fs-2 text-gray-300 opacity-25"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-modern border-0 border-start border-success border-4 shadow-sm py-2">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-xs fw-bold text-success text-uppercase mb-1">Đang hoạt động</div>
+                        <div class="h4 mb-0 fw-bold text-dark">{{total}}</div>
+                    </div>
+                    <i class="bi bi-person-check-fill fs-2 text-gray-300 opacity-25"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-modern border-0 border-start border-warning border-4 shadow-sm py-2">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-xs fw-bold text-warning text-uppercase mb-1">Yêu cầu mới</div>
+                        <div class="h4 mb-0 fw-bold text-dark">12</div>
+                    </div>
+                    <i class="bi bi-envelope-paper-fill fs-2 text-gray-300 opacity-25"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card card-modern shadow-sm mb-4">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" class="form-control border-start-0 ps-0"
+                        placeholder="Tìm tên, email hoặc số điện thoại...">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select">
+                    <option selected>Trạng thái: Tất cả</option>
+                    <option>Đang hoạt động</option>
+                    <option>Bị khóa</option>
+                    <option>Chờ xác minh</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-outline-secondary w-100"><i class="bi bi-funnel me-2"></i>Lọc nâng cao</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card card-modern shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-modern align-middle table-hover mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Khách hàng</th>
+                        <th>Thông tin liên hệ</th>
+                        <th>Ngày sinh</th>
+                        <th>Điểm</th>
+                        <th>Thành viên</th>
+                        <th class="text-end pe-4">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each customers}}
+                    <tr>
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                
+                                <div>
+                                    <div class="fw-bold">{{this.full_name}}</div>
+                                    <small class="text-muted">ID: #{{this.username}}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="small"><i class="bi bi-envelope me-2"></i>{{this.email}}</div>
+                            <div class="small text-muted"><i class="bi bi-telephone me-2"></i>{{this.phone_number}}</div>
+                        </td>
+                        <td>{{formatDate this.date_of_birth}}</td>
+                        <td><span class="fw-bold text-dark">{{this.loyalty_points}}</span></td>
+                        <td><span class="status-badge status-active">{{this.membership_level}}</span></td>
+                        <td class="text-end pe-4">
+                            <button class="btn btn-sm btn-light border shadow-sm mx-1" title="Chi tiết"><i
+                                    class="bi bi-eye text-primary"></i></button>
+                            <button class="btn btn-sm btn-light border shadow-sm mx-1" title="Khóa tài khoản"><i
+                                    class="bi bi-lock text-warning"></i></button>
+                            <button class="btn btn-sm btn-light border shadow-sm mx-1" title="Xóa"><i
+                                    class="bi bi-trash text-danger"></i></button>
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer bg-white border-top-0 py-3">
+        <nav class="d-flex justify-content-between align-items-center">
+            <p class="text-muted small mb-0">Hiển thị trang {{currentPage}} / {{totalPages}} - Tổng {{total}} khách hàng</p>
+            <ul class="pagination pagination-sm mb-0">
+                <li class="page-item {{#unless hasPrev}}disabled{{/unless}}">
+                    {{#if hasPrev}}
+                        <a class="page-link" href="?page={{prevPage}}">Trước</a>
+                    {{else}}
+                        <span class="page-link">Trước</span>
+                    {{/if}}
+                </li>
+                
+                <li class="page-item active">
+                    <span class="page-link">{{currentPage}}</span>
+                </li>
+                
+                {{#if hasNext}}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{nextPage}}">{{nextPage}}</a>
+                    </li>
+                {{/if}}
+                
+                <li class="page-item {{#unless hasNext}}disabled{{/unless}}">
+                    {{#if hasNext}}
+                        <a class="page-link" href="?page={{nextPage}}">Sau</a>
+                    {{else}}
+                        <span class="page-link">Sau</span>
+                    {{/if}}
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+
+<div class="modal fade" id="addCustomerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold">Thêm khách hàng mới</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form>
+                    <div class="mb-3 text-center">
+                        <div class="position-relative d-inline-block">
+                            
+                            <label for="upload-photo"
+                                class="position-absolute bottom-0 end-0 bg-white rounded-circle shadow-sm border p-1"
+                                style="cursor: pointer;">
+                                <i class="bi bi-camera-fill text-primary"></i>
+                            </label>
+                            <input type="file" id="upload-photo" hidden>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label class="form-label fw-bold small">Họ và tên</label>
+                            <input type="text" class="form-control" placeholder="Nhập tên khách hàng">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Email</label>
+                            <input type="email" class="form-control" placeholder="example@email.com">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Số điện thoại</label>
+                            <input type="tel" class="form-control" placeholder="090...">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label fw-bold small">Địa chỉ</label>
+                            <textarea class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-top-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary px-4">Lưu thông tin</button>
+            </div>
+        </div>
+    </div>
+</div>

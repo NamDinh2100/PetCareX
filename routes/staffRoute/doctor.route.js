@@ -1,22 +1,12 @@
 import express from 'express';
-import * as model from '../models/doctor.model.js';
+import * as doctorModel from '../../models/doctor.model.js';
 
 const router = express.Router();
 
-/* Middleware: chỉ cho bác sĩ */
-router.use((req, res, next) => {
-  if (!req.session.username) {
-    return res.redirect('/auth/login');
-  }
-  next();
+router.get('/', function (req, res) {
+    res.render('vwDoctor/home');
 });
 
-/* HOME bác sĩ */
-router.get('/doctor/home', (req, res) => {
-  res.render('doctor/home');
-});
-
-/* LỊCH HẸN HÔM NAY */
 router.get('/doctor/appointments', async (req, res) => {
   const list = await model.getAppointmentsForDoctorToday(req.session.username);
 
