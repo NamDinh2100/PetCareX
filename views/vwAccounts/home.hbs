@@ -1,4 +1,160 @@
-<h1> Home Page </h1>
+{{#section 'css'}}
+<style>
+    /* Thiết lập ảnh nền toàn màn hình */
+    .hero-wrapper {
+        position: relative;
+        min-height: 100vh;
+        width: 100%;
+        /* Ảnh nền sáng, chủ đề thú cưng */
+        background: url('https://images.unsplash.com/photo-1587300003388-59208cc962cb?q=80&w=2070&auto=format&fit=crop') no-repeat center center;
+        background-size: cover;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* Căn logo lên trên, nội dung xuống dưới */
+    }
 
-<a href="/signin"> Signin </a>
-<a href="/signup"> Signup </a>
+    /* Lớp phủ gradient nhẹ để làm dịu ảnh và giúp chữ rõ hơn */
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.8) 80%);
+        z-index: 1;
+    }
+
+    /* Nội dung nằm trên lớp phủ */
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        padding: 3rem 4rem; /* Margin cho nội dung không sát lề */
+    }
+
+    /* Logo/Tên Web góc trái trên */
+    .brand-area {
+        margin-bottom: auto; /* Đẩy phần này lên trên cùng */
+    }
+    
+    .brand-title {
+        font-family: 'Segoe UI', sans-serif;
+        font-weight: 900;
+        font-size: 3.5rem;
+        color: #0d6efd; /* Màu Primary đồng bộ */
+        letter-spacing: -1px;
+        text-shadow: 2px 2px 0px rgba(255,255,255,1);
+    }
+    
+    .brand-subtitle {
+        font-weight: 600;
+        color: #495057;
+        font-size: 1.2rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-left: 5px;
+    }
+
+    /* Khu vực nội dung chính ở nửa dưới */
+    .intro-area {
+        max-width: 600px;
+        padding-bottom: 5rem; /* Cách đáy một khoảng cho đẹp */
+    }
+
+    .intro-text {
+        font-size: 1.3rem;
+        color: #495057;
+        line-height: 1.6;
+        margin-bottom: 2.5rem;
+        font-weight: 500;
+    }
+
+    /* Style nút bấm hiện đại, to và rõ */
+    .btn-hero {
+        padding: 15px 50px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-primary-hero {
+        background-color: #0d6efd;
+        border: 2px solid #0d6efd;
+        color: white;
+        box-shadow: 0 10px 20px rgba(13, 110, 253, 0.3);
+    }
+    
+    .btn-primary-hero:hover {
+        background-color: #0b5ed7;
+        border-color: #0b5ed7;
+        transform: translateY(-3px);
+        box-shadow: 0 15px 25px rgba(13, 110, 253, 0.4);
+    }
+
+    .btn-outline-hero {
+        background-color: transparent;
+        border: 2px solid #0d6efd;
+        color: #0d6efd;
+    }
+
+    .btn-outline-hero:hover {
+        background-color: #0d6efd;
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(13, 110, 253, 0.2);
+    }
+
+    /* Responsive cho Mobile */
+    @media (max-width: 768px) {
+        .hero-content {
+            padding: 2rem;
+            text-align: center;
+        }
+        .brand-title {
+            font-size: 2.5rem;
+        }
+        .intro-area {
+            margin: 0 auto;
+        }
+        .btn-hero {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    }
+</style>
+{{/section}}
+
+<div class="hero-wrapper">
+    <div class="hero-overlay"></div>
+
+    <div class="container-fluid hero-content h-100 d-flex flex-column mt-5">
+        
+        <div class="brand-area">
+            <h1 class="brand-title">
+                <i class="fas fa-paw me-2"></i>PetCareX
+            </h1>
+            <div class="brand-subtitle">Veterinary Management System</div>
+        </div>
+
+        <div class="intro-area mt-auto">
+            <h2 class="fw-bold text-dark mb-3 display-6">Caring for your little friends</h2>
+            <p class="intro-text">
+                Welcome to the most comprehensive platform for pet health management. 
+                We connect loving owners with professional veterinary care, ensuring 
+                a happy and healthy life for your companions.
+            </p>
+
+            <div class="d-flex gap-3 flex-column flex-sm-row">
+                <a href="/signin" class="btn btn-hero btn-primary-hero text-decoration-none">
+                    Sign In
+                </a>
+                <a href="/signup" class="btn btn-hero btn-outline-hero text-decoration-none">
+                    Sign Up
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>

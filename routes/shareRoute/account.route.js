@@ -12,7 +12,7 @@ router.get('/signin', function (req, res) {
 });
 
 router.get('/signup', function (req, res) {
-    res.render('vwAccount/signup');
+    res.render('vwAccounts/signup');
 });
 
 router.post('/signin', async function (req, res) {
@@ -54,9 +54,44 @@ router.post('/signin', async function (req, res) {
     res.redirect(retUrl);
 });
 
-router.post('/signup', function (req, res) {
-    // Xử lý đăng ký ở đây
-    res.send('Đăng ký thành công');
+router.post('/signup', async function (req, res) {
+    const { username, email, password, name, phone, gender, dob } = req.body;
+
+    const existUser = await userModel.findUserByUsername(username);
+    if (existUser) {
+        return res.render('vwAccount/signup', {
+            error: 'Tên đăng nhập đã tồn tại!'
+        });
+    }
+
+    const accountData = {
+        username: username,
+        password: password
+    };
+
+    let genderCode = 'M';
+    if (gender === 'Nữ') genderCode = 'F';
+
+    const customerData = {
+        username: username, 
+        full_name: name,
+        email: email,
+        phone_number: phone,
+        gender: genderCode,
+        date_of_birth: dob, 
+        membership_level: 'Basic',
+    };
+
+    try {
+        await userModel.registerCustomer(accountData, customerData);
+        res.redirect('/signin?success=true');
+        
+    } catch (err) {
+        console.error("Lỗi đăng ký:", err);
+        res.render('vwAccount/signup', {
+            error: 'Đã có lỗi xảy ra. Vui lòng kiểm tra lại thông tin.'
+        });
+    }
 });
 
 router.post('/signout', function (req, res) {

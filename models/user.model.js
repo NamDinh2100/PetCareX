@@ -39,9 +39,28 @@ export function getCustomersCount() {
     return db('customer').count('* as total').first();
 }
 
-    
+
 export function findStaffByUserName(username) {
     return db('staff')
         .where('username', username)
         .first();
+}
+
+export function addAppUser(entity, trx) {
+    const query = db('app_user').insert(entity);
+    if (trx) return query.transacting(trx);
+    return query;
+}
+
+export function addCustomer(entity, trx) {
+    const query = db('customer').insert(entity);
+    if (trx) return query.transacting(trx);
+    return query;
+}
+
+export async function registerCustomer(accountData, customerData) {
+    return db.transaction(async function (trx) {
+        await addAppUser(accountData, trx);
+        await addCustomer(customerData, trx);
+    });
 }
