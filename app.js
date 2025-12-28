@@ -40,7 +40,9 @@ app.engine('hbs', engine({
     extname: '.hbs',
     defaultLayout: 'main', 
     helpers: {
-        eq: (a, b) => a === b,
+        eq(a, b) {
+            return a === b;
+        },
         json: (context) => JSON.stringify(context),
 
         formatDate(date) {
@@ -49,6 +51,42 @@ app.engine('hbs', engine({
                 month: '2-digit',
                 year: 'numeric'
             });
+        },
+
+        formatCurrency(amount) {
+            if (!amount) return '0';
+            return new Intl.NumberFormat('vi-VN').format(amount);
+        },
+
+        formatNumber(num) {
+            if (!num) return '0';
+            return new Intl.NumberFormat('vi-VN').format(num);
+        },
+
+        formatDecimal(num, places) {
+            if (!num) return '0';
+            return parseFloat(num).toFixed(places || 2);
+        },
+
+        substring(str, start, length) {
+            if (!str) return '';
+            return str.substring(start, start + length);
+        },
+
+        multiply(a, b) {
+            return (a || 0) * (b || 0);
+        },
+        math (op, a, b) {
+            a = parseFloat(a);
+            b = parseFloat(b);
+            switch (op) {
+                case '+': return a + b;
+                case '-': return a - b;
+                case '*': return a * b;
+                case '/': return a / b;
+                case '%': return a % b;
+                default: return null;
+            }
         },
 
         section: expressHandlebarsSections()

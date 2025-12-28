@@ -50,15 +50,21 @@
 
                                 <td>
                                     {{!-- Logic hiển thị màu badge dựa trên text status --}}
-                                    <span class="badge rounded-pill 
-                                        {{#if (eq status 'Scheduled')}}bg-primary{{/if}}
-                                        {{#if (eq status 'Confirmed')}}bg-info text-dark{{/if}}
-                                        {{#if (eq status 'Completed')}}bg-success{{/if}}
-                                        {{#if (eq status 'Cancelled')}}bg-danger{{/if}}
-                                        {{#if (eq status 'Need re-exam')}}bg-warning text-dark{{/if}}
-                                        px-3 py-2">
-                                        {{status}}
-                                    </span>
+                                    {{#if (eq status 'Scheduled')}}
+                                        <span class="badge rounded-pill bg-primary px-3 py-2">{{status}}</span>
+                                    {{/if}}
+                                    {{#if (eq status 'Confirmed')}}
+                                        <span class="badge rounded-pill bg-info text-dark px-3 py-2">{{status}}</span>
+                                    {{/if}}
+                                    {{#if (eq status 'Completed')}}
+                                        <span class="badge rounded-pill bg-success px-3 py-2">{{status}}</span>
+                                    {{/if}}
+                                    {{#if (eq status 'Cancelled')}}
+                                        <span class="badge rounded-pill bg-danger px-3 py-2">{{status}}</span>
+                                    {{/if}}
+                                    {{#if (eq status 'Need re-exam')}}
+                                        <span class="badge rounded-pill bg-warning text-dark px-3 py-2">{{status}}</span>
+                                    {{/if}}
                                 </td>
 
                                 <td class="text-end pe-4">

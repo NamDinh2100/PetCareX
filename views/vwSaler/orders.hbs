@@ -1,0 +1,91 @@
+<div class="py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Quản lý đơn hàng</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/saler">Tổng quan</a></li>
+                    <li class="breadcrumb-item active">Đơn hàng</li>
+                </ol>
+            </nav>
+        </div>
+        <button class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>Tạo đơn hàng
+        </button>
+    </div>
+
+    <!-- Orders Table -->
+    <div class="card card-modern">
+        <div class="card-header bg-white py-3">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text" class="form-control bg-light border-start-0"
+                            placeholder="Tìm kiếm đơn hàng...">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select bg-light">
+                        <option selected>Tất cả trạng thái</option>
+                        <option>Chờ xử lý</option>
+                        <option>Đã xác nhận</option>
+                        <option>Đang giao</option>
+                        <option>Hoàn thành</option>
+                        <option>Đã hủy</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-modern mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Mã đơn</th>
+                            <th>Khách hàng</th>
+                            <th>Ngày đặt</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                            <th class="text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#if orders}}
+                        {{#each orders}}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold">#{{this.order_id}}</div>
+                            </td>
+                            <td>{{this.customer_name}}</td>
+                            <td>{{this.order_date}}</td>
+                            <td>
+                                <span class="fw-bold text-success">{{this.total_amount}}đ</span>
+                            </td>
+                            <td>
+                                <span class="status-badge status-in-stock">{{this.status}}</span>
+                            </td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {{/each}}
+                        {{else}}
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="bi bi-cart-x fs-1 d-block mb-3"></i>
+                                <p class="mb-0">Chưa có đơn hàng nào</p>
+                            </td>
+                        </tr>
+                        {{/if}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,394 @@
+<div class="d-sm-flex align-items-center justify-content-between mb-4 pt-3">
+    <h1 class="h3 mb-0 text-gray-800 fw-bold">Báo cáo Doanh thu {{currentYear}}</h1>
+    <div class="d-flex gap-2">
+        <select class="form-select form-select-sm shadow-sm" onchange="changeYear(this.value)" style="width: 120px;">
+            <option value="2024" {{#if (eq currentYear 2024)}}selected{{/if}}>2024</option>
+            <option value="2023" {{#if (eq currentYear 2023)}}selected{{/if}}>2023</option>
+            <option value="2022" {{#if (eq currentYear 2022)}}selected{{/if}}>2022</option>
+        </select>
+        <button class="btn btn-sm btn-success shadow-sm px-3" onclick="exportYearlyReport()">
+            <i class="bi bi-download me-1"></i>Xuất báo cáo
+        </button>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-modern bg-gradient-primary h-100 py-2">
+            <div class="card-body text-white">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="small fw-bold text-uppercase opacity-75">Doanh thu tất cả chi nhánh</div>
+                        <div class="h3 mb-0 fw-bold">{{#if stats.totalRevenue}}{{formatCurrency stats.totalRevenue}}đ{{else}}0đ{{/if}}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-bank fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-modern bg-gradient-success h-100 py-2">
+            <div class="card-body text-white">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="small fw-bold text-uppercase opacity-75">Doanh thu bán SP</div>
+                        <div class="h3 mb-0 fw-bold">{{#if stats.productRevenue}}{{formatCurrency stats.productRevenue}}đ{{else}}0đ{{/if}}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-box-seam fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-modern bg-gradient-info h-100 py-2">
+            <div class="card-body text-white">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="small fw-bold text-uppercase opacity-75">Tổng lượt khám</div>
+                        <div class="h4 mb-0 fw-bold">{{#if stats.totalExaminations}}{{formatNumber stats.totalExaminations}} lượt{{else}}0 lượt{{/if}}</div>
+                        <div class="small mt-1"><i class="bi bi-calendar-check"></i> {{#if stats.totalInvoices}}{{stats.totalInvoices}} hóa đơn{{else}}0 hóa đơn{{/if}}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-stethoscope fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-modern bg-gradient-warning h-100 py-2">
+            <div class="card-body text-dark">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="small fw-bold text-uppercase opacity-75">Tỷ lệ hài lòng</div>
+                        <div class="h4 mb-0 fw-bold">{{#if stats.satisfactionRate}}{{formatDecimal stats.satisfactionRate 1}}/5.0{{else}}Chưa có dữ liệu{{/if}}</div>
+                        {{#if stats.satisfactionRate}}
+                        <div class="progress mt-2" style="height: 5px;">
+                            <div class="progress-bar bg-dark" style="width: {{multiply stats.satisfactionRate 20}}%"></div>
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-emoji-smile fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-xl-8 col-lg-7">
+        <div class="card card-modern shadow-sm h-100">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 fw-bold text-primary">Biểu đồ doanh thu theo tháng {{currentYear}}</h6>
+                <div class="btn-group btn-group-sm" role="group">
+                    <input type="radio" class="btn-check" name="chartType" id="lineChart" checked>
+                    <label class="btn btn-outline-primary" for="lineChart">Line</label>
+                    <input type="radio" class="btn-check" name="chartType" id="barChart">
+                    <label class="btn btn-outline-primary" for="barChart">Bar</label>
+                </div>
+            </div>
+            <div class="card-body">
+                <div style="height: 350px;">
+                    <canvas id="monthlyRevenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-lg-5">
+        <div class="card card-modern shadow-sm h-100">
+            <div class="card-header bg-white py-3">
+                <h6 class="m-0 fw-bold text-primary">Doanh thu theo quý {{currentYear}}</h6>
+            </div>
+            <div class="card-body">
+                <div style="height: 350px;">
+                    <canvas id="quarterlyChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bảng doanh thu chi tiết theo tháng -->
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="card card-modern shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h6 class="m-0 fw-bold text-primary">Chi tiết doanh thu từng tháng</h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Tháng</th>
+                                <th class="text-center">Doanh thu</th>
+                                <th class="text-center">Số hóa đơn</th>
+                                <th class="text-center">TB/Hóa đơn</th>
+                                <th class="text-end pe-4">Tăng trưởng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each monthlyRevenue}}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-bold">Tháng {{this.month}}/{{../currentYear}}</div>
+                                </td>
+                                <td class="text-center fw-bold text-primary">{{formatCurrency this.total_revenue}}đ</td>
+                                <td class="text-center">{{this.total_invoices}}</td>
+                                <td class="text-center">{{formatCurrency this.avg_revenue}}đ</td>
+                                <td class="text-end pe-4">
+                                    {{#if @index}}
+                                        {{#with (lookup ../monthlyRevenue (math @index 1 "-"))}}
+                                            {{#if (gt ../this.total_revenue this.total_revenue)}}
+                                                <span class="text-success"><i class="bi bi-arrow-up"></i> {{formatDecimal (math (math ../this.total_revenue this.total_revenue "/") 1 "-" 100 "*") 1}}%</span>
+                                            {{else}}
+                                                <span class="text-danger"><i class="bi bi-arrow-down"></i> {{formatDecimal (math 1 (math ../this.total_revenue this.total_revenue "/") "-" 100 "*") 1}}%</span>
+                                            {{/if}}
+                                        {{/with}}
+                                    {{else}}
+                                        <span class="text-muted">-</span>
+                                    {{/if}}
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card card-modern shadow-sm border-0">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 fw-bold text-primary">Chi tiết hiệu suất bác sĩ</h6>
+        <button class="btn btn-sm btn-outline-secondary" onclick="exportExcel()">
+            <i class="bi bi-download me-1"></i>Xuất Excel
+        </button>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Bác sĩ</th>
+                        <th>Chuyên khoa</th>
+                        <th class="text-center">Số lượt khám</th>
+                        <th class="text-center">Doanh thu khám</th>
+                        <th class="text-center">Bệnh nhân điều trị</th>
+                        <th class="text-end pe-4">Tổng cộng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each revenueByDoctor}}
+                    <tr>
+                        <td class="ps-4">
+                            <div class="fw-bold text-dark">{{this.doctor_name}}</div>
+                            <small class="text-muted">ID: {{this.doctor_username}}</small>
+                        </td>
+                        <td>{{#if this.specialization}}{{this.specialization}}{{else}}N/A{{/if}}</td>
+                        <td class="text-center">{{this.total_invoices}}</td>
+                        <td class="text-center">{{formatCurrency this.total_revenue}}đ</td>
+                        <td class="text-center">{{this.total_pets_treated}}</td>
+                        <td class="text-end pe-4 fw-bold text-primary">{{formatCurrency this.total_revenue}}đ</td>
+                    </tr>
+                    {{else}}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            Không có dữ liệu hiệu suất bác sĩ
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{{#section 'js'}}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+let monthlyChart;
+let quarterlyChart;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Load biểu đồ doanh thu theo tháng
+    loadMonthlyRevenueChart();
+    
+    // Load biểu đồ doanh thu theo quý
+    loadQuarterlyChart();
+    
+    // Event listeners cho thay đổi loại biểu đồ
+    document.querySelectorAll('input[name="chartType"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            loadMonthlyRevenueChart(this.id === 'lineChart' ? 'line' : 'bar');
+        });
+    });
+});
+
+async function loadMonthlyRevenueChart(chartType = 'line') {
+    try {
+        const response = await fetch(`/manager/api/revenue/monthly-chart?year={{currentYear}}`);
+        const data = await response.json();
+        
+        const ctx = document.getElementById('monthlyRevenueChart').getContext('2d');
+        
+        // Destroy existing chart
+        if (monthlyChart) {
+            monthlyChart.destroy();
+        }
+        
+        monthlyChart = new Chart(ctx, {
+            type: chartType,
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                    data: data.datasets[0].data,
+                    backgroundColor: chartType === 'line' ? 'rgba(54, 162, 235, 0.1)' : 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2,
+                    fill: chartType === 'line',
+                    tension: chartType === 'line' ? 0.4 : 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return new Intl.NumberFormat('vi-VN', {
+                                    style: 'currency',
+                                    currency: 'VND',
+                                    minimumFractionDigits: 0
+                                }).format(value);
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'Doanh thu: ' + new Intl.NumberFormat('vi-VN').format(context.parsed.y) + 'đ';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error loading monthly chart:', error);
+        document.getElementById('monthlyRevenueChart').parentElement.innerHTML = 
+            '<div class="text-center text-muted py-5"><i class="bi bi-exclamation-triangle fs-1 d-block mb-2"></i>Không thể tải biểu đồ</div>';
+    }
+}
+
+async function loadQuarterlyChart() {
+    try {
+        const response = await fetch(`/manager/api/revenue/quarterly-chart?year={{currentYear}}`);
+        const data = await response.json();
+        
+        const ctx = document.getElementById('quarterlyChart').getContext('2d');
+        quarterlyChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return context.label + ': ' + new Intl.NumberFormat('vi-VN').format(value) + 'đ (' + percentage + '%)';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error loading quarterly chart:', error);
+        document.getElementById('quarterlyChart').parentElement.innerHTML = 
+            '<div class="text-center text-muted py-5"><i class="bi bi-exclamation-triangle fs-1 d-block mb-2"></i>Không thể tải biểu đồ</div>';
+    }
+}
+
+function changeYear(year) {
+    window.location.href = `/manager/revenue?year=${year}`;
+}
+
+async function exportYearlyReport() {
+    try {
+        // Tạo dữ liệu báo cáo
+        const monthlyData = {{{json monthlyRevenue}}};
+        const yearSummary = {{{json yearSummary}}};
+        
+        // Tạo workbook
+        const wb = XLSX.utils.book_new();
+        
+        // Sheet 1: Tóm tắt năm
+        const summaryData = [
+            ['BÁO CÁO DOANH THU NĂM {{currentYear}}'],
+            [''],
+            ['Tổng doanh thu', new Intl.NumberFormat('vi-VN').format(yearSummary.total_revenue) + ' VNĐ'],
+            ['Tổng hóa đơn', yearSummary.total_invoices],
+            ['Trung bình tháng', new Intl.NumberFormat('vi-VN').format(yearSummary.avg_monthly_revenue) + ' VNĐ'],
+            ['Giá trị TB/Hóa đơn', new Intl.NumberFormat('vi-VN').format(yearSummary.avg_invoice_value) + ' VNĐ'],
+            ['Tăng trưởng', yearSummary.growth_rate + '%'],
+            ['Tháng cao nhất', yearSummary.best_month.month_name + ' - ' + new Intl.NumberFormat('vi-VN').format(yearSummary.best_month.total_revenue) + ' VNĐ'],
+            ['Tháng thấp nhất', yearSummary.worst_month.month_name + ' - ' + new Intl.NumberFormat('vi-VN').format(yearSummary.worst_month.total_revenue) + ' VNĐ']
+        ];
+        const summaryWs = XLSX.utils.aoa_to_sheet(summaryData);
+        
+        // Sheet 2: Chi tiết theo tháng
+        const monthlyHeaders = ['Tháng', 'Doanh thu (VNĐ)', 'Số hóa đơn', 'TB/Hóa đơn (VNĐ)'];
+        const monthlySheetData = [
+            monthlyHeaders,
+            ...monthlyData.map(m => [
+                `Tháng ${m.month}`,
+                m.total_revenue,
+                m.total_invoices,
+                m.avg_revenue
+            ])
+        ];
+        const monthlyWs = XLSX.utils.aoa_to_sheet(monthlySheetData);
+        
+        // Thêm sheets
+        XLSX.utils.book_append_sheet(wb, summaryWs, 'Tóm tắt');
+        XLSX.utils.book_append_sheet(wb, monthlyWs, 'Chi tiết tháng');
+        
+        // Xuất file
+        XLSX.writeFile(wb, `bao_cao_doanh_thu_{{currentYear}}_${new Date().toISOString().split('T')[0]}.xlsx`);
+        
+    } catch (error) {
+        console.error('Error exporting report:', error);
+        alert('Có lỗi xảy ra khi xuất báo cáo');
+    }
+}
+</script>
+{{/section}}

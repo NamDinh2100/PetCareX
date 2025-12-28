@@ -1,0 +1,173 @@
+<div class="py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Chỉnh sửa lịch hẹn</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/receptionist">Tổng quan</a></li>
+                    <li class="breadcrumb-item"><a href="/receptionist/appointments">Lịch hẹn</a></li>
+                    <li class="breadcrumb-item active">Chỉnh sửa #{{appointment.appointment_id}}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    {{#if error}}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        Có lỗi xảy ra khi cập nhật lịch hẹn. Vui lòng thử lại.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {{/if}}
+
+    <div class="row">
+        <!-- Form chỉnh sửa -->
+        <div class="col-lg-8">
+            <div class="card card-modern">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold text-primary">
+                        <i class="bi bi-pencil-square me-2"></i>Thông tin lịch hẹn
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form action="/receptionist/appointments/{{appointment.appointment_id}}/edit" method="POST">
+                        <div class="row g-3">
+                            <!-- Ngày hẹn -->
+                            <div class="col-md-6">
+                                <label for="appointment_date" class="form-label fw-bold">
+                                    Ngày hẹn <span class="text-danger">*</span>
+                                </label>
+                                <input type="date" class="form-control" id="appointment_date" name="appointment_date"
+                                    value="{{appointment.appointment_date}}" required>
+                            </div>
+
+                            <!-- Giờ hẹn -->
+                            <div class="col-md-6">
+                                <label for="appointment_time" class="form-label fw-bold">
+                                    Giờ hẹn <span class="text-danger">*</span>
+                                </label>
+                                <input type="time" class="form-control" id="appointment_time" name="appointment_time"
+                                    value="{{appointment.appointment_time}}" required>
+                            </div>
+
+                            <!-- Bác sĩ -->
+                            <div class="col-12">
+                                <label for="staff_username" class="form-label fw-bold">
+                                    <i class="bi bi-person-badge me-1"></i>Chọn bác sĩ
+                                </label>
+                                <select class="form-select" id="staff_username" name="staff_username">
+                                    <option value="">-- Chưa phân công --</option>
+                                    {{#each doctors}}
+                                    <option value="{{this.username}}" {{#if (eq this.username
+                                        ../appointment.staff_username)}}selected{{/if}}>
+                                        {{this.full_name}} - {{this.phone_number}}
+                                    </option>
+                                    {{/each}}
+                                </select>
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Chọn bác sĩ thuộc chi nhánh để phân công khám
+                                </div>
+                            </div>
+
+                            <!-- Trạng thái -->
+                            <div class="col-12">
+                                <label for="status" class="form-label fw-bold">
+                                    Trạng thái <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" id="status" name="status" required>
+                                    <option value="Scheduled" {{#if (eq appointment.status
+                                        "Scheduled")}}selected{{/if}}>
+                                        Đã lên lịch
+                                    </option>
+                                    <option value="Confirmed" {{#if (eq appointment.status
+                                        "Confirmed")}}selected{{/if}}>
+                                        Đã xác nhận
+                                    </option>
+                                    <option value="Cancelled" {{#if (eq appointment.status
+                                        "Cancelled")}}selected{{/if}}>
+                                        Đã hủy
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="col-12 mt-4">
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-check-circle me-2"></i>Lưu thay đổi
+                                    </button>
+                                    <a href="/receptionist/appointments" class="btn btn-secondary">
+                                        <i class="bi bi-x-circle me-2"></i>Hủy
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thông tin khách hàng & thú cưng -->
+        <div class="col-lg-4">
+            <!-- Thông tin khách hàng -->
+            <div class="card card-modern mb-3">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 fw-bold text-primary">
+                        <i class="bi bi-person-circle me-2"></i>Khách hàng
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <small class="text-muted">Họ tên</small>
+                        <div class="fw-bold">{{appointment.customer_name}}</div>
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted">Số điện thoại</small>
+                        <div>
+                            <i class="bi bi-telephone me-1"></i>{{appointment.phone_number}}
+                        </div>
+                    </div>
+                    <div>
+                        <small class="text-muted">Username</small>
+                        <div>
+                            <i class="bi bi-person me-1"></i>{{appointment.customer_username}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thông tin thú cưng -->
+            <div class="card card-modern mb-3">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 fw-bold text-primary">
+                        <i class="bi bi-heart-fill me-2"></i>Thú cưng
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <small class="text-muted">Tên</small>
+                        <div class="fw-bold">{{appointment.pet_name}}</div>
+                    </div>
+                    <div>
+                        <small class="text-muted">Loài</small>
+                        <div>{{appointment.species}}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thông tin chi nhánh -->
+            <div class="card card-modern">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 fw-bold text-primary">
+                        <i class="bi bi-building me-2"></i>Chi nhánh
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="fw-bold">{{appointment.branch_name}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
