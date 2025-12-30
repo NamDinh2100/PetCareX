@@ -12,6 +12,12 @@
     .cursor-not-allowed {
         cursor: not-allowed;
     }
+
+    .cursor-pointer { cursor: pointer; }
+    .hover-danger:hover {
+        background-color: #dc3545;
+        color: white;
+    }
 </style>
 {{/section}}    
 
@@ -49,7 +55,7 @@
             </form>
             
             {{!-- Nút về trang chủ --}}
-            <a href="/doctor/home" class="btn btn-outline-secondary rounded-circle" title="Về trang chủ">
+            <a href="/doctor" class="btn btn-outline-secondary rounded-circle" title="Về trang chủ">
                 <i class="fas fa-home"></i>
             </a>
         </div>
@@ -134,15 +140,13 @@
             <i class="fas fa-power-off me-2"></i>Đóng ca khám
         </a>
     </div>
-
 </div>
 
-<<<<<<< HEAD:views/doctor/home.hbs
+
+
 {{!-- SCRIPT FORMAT NGÀY THÁNG --}}
-=======
 {{#section 'js'}}
 {{!-- Script nhỏ để hiển thị ngày hiện tại --}}
->>>>>>> 8d86019457e41b25330bab30d7dbc6d2bc84f6fa:views/vwDoctor/home.hbs
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         document.querySelectorAll('.date-format').forEach(el => {
@@ -158,15 +162,4 @@
     });
 </script>
 
-<<<<<<< HEAD:views/doctor/home.hbs
-{{!-- CSS TÙY CHỈNH --}}
-<style>
-    .cursor-pointer { cursor: pointer; }
-    .hover-danger:hover {
-        background-color: #dc3545;
-        color: white;
-    }
-</style>
-=======
 {{/section}}
->>>>>>> 8d86019457e41b25330bab30d7dbc6d2bc84f6fa:views/vwDoctor/home.hbs

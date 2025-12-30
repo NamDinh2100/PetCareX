@@ -1,3 +1,32 @@
+{{#section 'css'}}
+
+<style>
+    .icon-box {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    .hover-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15)!important;
+    }
+    .hover-card:hover .icon-box {
+        transform: scale(1.1);
+    }
+    .hover-up:hover {
+        transform: translateY(-3px);
+        border: 1px solid #0dcaf0 !important;
+    }
+</style>
+
+{{/section}}
+
 <div class="container py-5">
     
     {{!-- 1. BANNER CHÀO MỪNG (Giữ nguyên) --}}
@@ -21,7 +50,7 @@
             <h4 class="fw-bold text-dark border-start border-4 border-info ps-3">
                 <i class="fas fa-paw me-2 text-info"></i>Thú cưng của bạn
             </h4>
-            <button class="btn btn-sm btn-outline-primary rounded-pill">
+            <button id="addPetBtn" class="btn btn-sm btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#addPet">
                 <i class="fas fa-plus me-1"></i>Thêm bé mới
             </button>
         </div>
@@ -150,33 +179,58 @@
     </div>
 </div>
 
+<div class="modal fade" id="addPet" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Thêm thuốc mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="medicineForm" method="POST" action="/saler/add-medicine">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold small">Tên sản phẩm</label>
+                            <input type="text" name="product_name" class="form-control"
+                                placeholder="Ví dụ: Xương gặm sạch răng">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small">Dạng</label>
+                            <input type="text" name="form" class="form-control" placeholder="Ví dụ: Viên nén">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small">Giá bán (VNĐ)</label>
+                            <input type="number" name="selling_price" class="form-control" placeholder="0.000">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small">Số lượng trong kho</label>
+                            <input type="number" name="stock_quantity" class="form-control" placeholder="0">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold small">Mô tả sản phẩm</label>
+                            <textarea name="description" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy bỏ</button>
+                        <button type="submit" class="btn btn-primary px-4">Lưu sản phẩm</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
 {{!-- SCRIPT & STYLE RIÊNG --}}
+{{#section 'js'}}
 <script>
     const options = { weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric' };
     document.getElementById('currentDate').innerText = new Date().toLocaleDateString('vi-VN', options);
 </script>
+{{/section}}
 
-<style>
-    .icon-box {
-        width: 60px;
-        height: 60px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-    }
-    .hover-card {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .hover-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15)!important;
-    }
-    .hover-card:hover .icon-box {
-        transform: scale(1.1);
-    }
-    .hover-up:hover {
-        transform: translateY(-3px);
-        border: 1px solid #0dcaf0 !important;
-    }
-</style>
