@@ -31,5 +31,5 @@ export function getDoctorsByBranch(branch_id) {
             branch_id: branch_id,
             position: 'Doctor'
         })
-        .select('username', 'full_name', 'phone_number', 'email');
+        .select('username', 'full_name');
 }

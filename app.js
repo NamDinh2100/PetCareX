@@ -1,34 +1,23 @@
-
-
 import express from 'express';
 import session from 'express-session';
 import { engine } from 'express-handlebars';
 
-
-
 import customerRoute from './routes/customer.route.js';
-
-
 import expressHandlebarsSections from 'express-handlebars-sections';
-
 
 import accountRoute from './routes/shareRoute/account.route.js';
 
 // STAFF ROUTES
 import doctorRoute from './routes/staffRoute/doctor.route.js';
 
-
-
 import receptionistRoute from './routes/staffRoute/receptionist.route.js';
 import salerRoute from './routes/staffRoute/seler.route.js';
 import managerRoute from './routes/staffRoute/manager.route.js';
 // MANAGER ROUTES
 
-
 import { isAuth, isManager, isDoctor, isReceptionist, isSaler} from './middlewares/auth.mdw.js';
 
 const app = express();
-
 
 /* ================= BODY PARSER ================= */
 app.use(express.urlencoded({ extended: true }));
@@ -41,7 +30,7 @@ app.use(
     secret: 'petcarex',
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 1000 * 60 * 60 * 24 } // (Tuỳ chọn) Session sống 1 ngày
+    cookie: { maxAge: 1000 * 60 * 60 * 24 }
   })
 );
 
@@ -62,6 +51,17 @@ app.engine('hbs', engine({
                 month: '2-digit',
                 year: 'numeric'
             });
+        },
+        formatDateForInput(date) {
+            if (!date) return '';
+            const d = new Date(date);
+            if (isNaN(d.getTime())) return '';
+            
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            
+            return `${year}-${month}-${day}`;
         },
 
         formatCurrency(amount) {
@@ -103,8 +103,6 @@ app.engine('hbs', engine({
         section: expressHandlebarsSections()
     }
 }));
-
-
 
 app.set('view engine','hbs');
 app.set('views','./views');

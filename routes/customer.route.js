@@ -10,7 +10,6 @@ import * as medicalModel from '../models/doctor/exam.model.js';
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  console.log('Customer:', req.session.authUser);
   const pets = await petModel.getPetsByCustomer(req.session.authUser.username);
   res.render('vwCustomer/home', { pets });
 });
