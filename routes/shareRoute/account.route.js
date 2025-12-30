@@ -28,7 +28,6 @@ router.post('/signin', async function (req, res) {
     }
 
     const staff = await userModel.findStaffByUserName(user.username);
-    console.log('Staff:', staff);
     req.session.isAuth = true;
     let url = '/';
 
@@ -58,7 +57,6 @@ router.post('/signin', async function (req, res) {
             url = '/customer';
         }
     }
-    console.log('Auth User:', req.session.authUser);
     const retUrl = req.session.retUrl || url;
     delete req.session.retUrl;
     res.redirect(retUrl);

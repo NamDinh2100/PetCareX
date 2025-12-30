@@ -21,22 +21,17 @@ router.get('/appointments', async function (req, res) {
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
     
-    // Lấy branch_id từ session của nhân viên
     const branchId = req.session.branch?.branch_id || null;
     
-    // Lấy filter status từ query params
     const statusFilter = req.query.status || null;
     
-    // Receptionist không quản lý các lịch hẹn đã Completed hoặc Cancelled
     const excludeStatuses = ['Completed', 'Cancelled', 'Need re-exam'];
     
-    // Lấy dữ liệu từ model với filter
     const appointments = await appointmentModel.getAppointmentsWithLimit(limit, offset, branchId, statusFilter, excludeStatuses);
     const total = await appointmentModel.getAppointmentsCount(branchId, statusFilter, excludeStatuses);
     
     const totalPages = Math.ceil(total.total / limit);
     
-    // Count by status (chỉ đếm các trạng thái đang hoạt động)
     const scheduled = appointments.filter(a => a.status === 'Scheduled').length;
 
     console.log('Appointments:', appointments[0]);
@@ -59,27 +54,50 @@ router.get('/appointments', async function (req, res) {
 });
 
 // Trang đặt lịch hẹn
-router.get('/create-appointment', function (req, res) {
+router.get('/create-appointment', async function (req, res) {
+    const { petName } = req.query;
+    let pets = [];
+    let searched = false;
+    
+    // Lấy thông tin pet đã chọn từ session
+    const selectedPet = req.session.selectedPet || null;
+    
+    if (petName) {
+        try {
+            pets = await appointmentModel.searchPetByName(petName);
+            searched = true;
+            console.log('Search results:', pets);
+        } catch (error) {
+            console.error('Error searching pet:', error);
+        }
+    }
+    
     res.render('vwReceptionist/create-appointment', { 
-        layout: 'receptionist'
+        layout: 'receptionist',
+        petName,
+        pets,
+        searched,
+        hasResults: pets.length > 0,
+        selectedPet
     });
 });
 
-// API tìm kiếm thú cưng
-router.get('/api/search-pet', async function (req, res) {
-    const { name, species } = req.query;
+// Xử lý chọn pet (lưu vào session)
+router.post('/create-appointment/select-pet', function (req, res) {
+    const { petId, ownerUsername, petName, ownerName, phoneNumber, species, breed } = req.body;
     
-    if (!name) {
-        return res.json({ success: false, message: 'Vui lòng nhập tên thú cưng' });
-    }
+    // Lưu thông tin pet đã chọn vào session
+    req.session.selectedPet = {
+        petId,
+        ownerUsername,
+        petName,
+        ownerName,
+        phoneNumber,
+        species,
+        breed
+    };
     
-    try {
-        const pets = await appointmentModel.searchPetByName(name, species);
-        res.json({ success: true, pets });
-    } catch (error) {
-        console.error('Error searching pet:', error);
-        res.json({ success: false, message: 'Có lỗi xảy ra khi tìm kiếm' });
-    }
+    res.redirect('/receptionist/create-appointment');
 });
 
 // Danh sách hóa đơn chưa có người nhận
@@ -163,6 +181,9 @@ router.post('/create-appointment', async function (req, res) {
             await appointmentModel.addServices(appointmentId, [serviceId]);
         }
         
+        // Xóa selectedPet khỏi session sau khi tạo thành công
+        delete req.session.selectedPet;
+        
         res.redirect('/receptionist/appointments?success=true');
     } catch (error) {
         console.error('Error creating appointment:', error);
@@ -178,7 +199,7 @@ router.get('/appointments/:id/edit', async function (req, res) {
     try {
         // Lấy thông tin lịch hẹn
         const appointment = await appointmentModel.getAppointmentById(appointmentId);
-        
+        console.log('Fetched appointment for edit:', appointment);
         if (!appointment) {
             return res.redirect('/receptionist/appointments?error=not_found');
         }
@@ -200,14 +221,11 @@ router.get('/appointments/:id/edit', async function (req, res) {
 // Xử lý cập nhật lịch hẹn
 router.post('/appointments/:id/edit', async function (req, res) {
     const appointmentId = req.params.id;
-    const { appointment_date, appointment_time, staff_username, status } = req.body;
-    
+
     try {
         const updateData = {
-            appointment_date,
-            appointment_time,
-            staff_username: staff_username || null,
-            status
+            staff_username: req.body.staff_username || null,
+            status: 'Confirmed'
         };
         
         await appointmentModel.updateAppointment(appointmentId, updateData);
